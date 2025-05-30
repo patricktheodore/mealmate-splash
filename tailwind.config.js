@@ -10,21 +10,14 @@ module.exports = {
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))',
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))',
-				},
+				primary: 'hsl(var(--primary))',
+				secondary: 'hsl(var(--secondary))',
+				accent: 'hsl(var(--accent))',
+				"button-bg": 'hsl(var(--button-bg))',
+				"button-bg-hover": 'hsl(var(--button-bg-hover))',
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))',
-				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))',
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -37,6 +30,17 @@ module.exports = {
 			},
 			fontFamily: {
 				sans: ['var(--font-inter)'],
+			},
+			fontSize: {
+				'2xs': '0.625rem', // 10px
+				xs: '0.75rem', // 12px
+				sm: '0.875rem', // 14px
+				md: '1rem', // 16px
+				lg: '1.125rem', // 18px
+				xl: '1.25rem', // 20px
+				'2xl': '1.5rem', // 24px
+				'3xl': '1.875rem', // 30px
+				'4xl': '2.25rem', // 36px
 			},
 			animation: {
 				'fade-up': 'fadeUp 0.5s ease-out',
