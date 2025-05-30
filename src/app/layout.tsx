@@ -1,6 +1,6 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
-import { DefaultSeo } from 'next-seo';
+// import { DefaultSeo } from 'next-seo';
 
 const inter = Inter({ subsets: ['latin'] });
 
