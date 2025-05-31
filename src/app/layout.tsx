@@ -1,6 +1,5 @@
 import './globals.css';
 import { Montserrat } from 'next/font/google';
-import localFont from 'next/font/local'
 // import { DefaultSeo } from 'next-seo';
 
 const montserrat = Montserrat({ 
