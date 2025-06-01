@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #F1F3E4;
   --foreground: #171717;
   --primary: #25551B;
   --secondary: #E2F380;
@@ -34,4 +34,8 @@ select,
 textarea {
   font-family: inherit;
   color: inherit;
+}
+
+input {
+  width: 100%;
 }
