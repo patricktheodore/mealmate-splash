@@ -12,8 +12,8 @@ export default function Home() {
   }
 
 	return (
-		<div className="w-full flex flex-col">
-			<nav className="w-full flex justify-between items-center p-4 xl:py-6 px-4 md:px-8 xl:px-12">
+		<div className="h-full relative w-full flex flex-col">
+			<nav className="absolute top-0 w-full flex justify-between items-center p-4 xl:py-6 px-4 md:px-8 xl:px-12">
 				<div className="flex items-center gap-2">
 					<Image
 						className="hidden md:block"
@@ -43,13 +43,13 @@ export default function Home() {
 				</div>
 			</nav>
 
-			<div className="w-full flex flex-col justify-center items-center gap-4 md:gap-8 xl:gap-12 px-4 md:px-8 xl:px-12 py-24">
+			<div className="h-screen w-full flex flex-col justify-center items-center gap-4 md:gap-8 xl:gap-12 px-4 md:px-8 xl:px-12 py-24">
 				<h2 className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500">Meal kits are broken</h2>
 				<h1 className="mb-12 md:mb-8 text-[48px] md:text-[110px] xl:text-[150px] leading-[0.9] tracking-tighter text-center text-gray-700">
 					We&apos;re fixing it.
 				</h1>
         <button onClick={scrollToForm} className="bg-button-bg hover:bg-button-bg-hover flex justify-center items-center gap-2 leading-5 text-base md:text-lg text-foreground py-4 md:py-6 px-8 md:px-12 rounded-full transition-colors duration-300 hover:cursor-pointer">
-          Grab a seat at the table 
+          Join the waitlist 
           <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
@@ -69,7 +69,7 @@ export default function Home() {
 				<div className="bg-background rounded-xl shadow-lg p-8 xl:p-12 w-full max-w-3xl mx-auto grid grid-cols-1 gap-4 md:gap-8 xl:gap-16 mt-24">
 					<div className="flex flex-col gap-4 md:gap-8 xl:gap-12">
 						<h3 className="text-[40px] md:text-[60px] xl:text-[80px] leading-[0.9] tracking-tighter text-center text-gray-700">
-							Let&apos;s revolutionise the way we eat
+							Let&apos;s revolutionise the way we eat 
 						</h3>
 						<form className="w-full flex flex-col gap-4">
 							<div className="flex flex-col gap-2">
@@ -77,14 +77,33 @@ export default function Home() {
 									name="name"
 									type="text"
 									placeholder="Your name"
-									className="px-4 py-3 text-3xl font-sans rounded-lg border border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
+									className="px-4 py-3 text-md md:text-xl font-sans rounded-lg border border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
 								/>
 							</div>
 							<div className="flex flex-col gap-2">
 								<input
+									name="email"
 									type="email"
 									placeholder="Your email"
-									className="px-4 py-3 text-3xl font-sans rounded-lg border border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
+									className="px-4 py-3 text-md md:text-xl font-sans rounded-lg border border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
+								/>
+							</div>
+							<div className="flex flex-col gap-2">
+								<input
+									name="location"
+									type="text"
+									placeholder="Your location (optional)"
+									className="px-4 py-3 text-md md:text-xl font-sans rounded-lg border border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
+								/>
+							</div>
+							<div className="flex flex-col gap-2">
+								<input
+									name="age"
+									type="number"
+									placeholder="Your age (optional)"
+									min="1"
+									max="120"
+									className="px-4 py-3 text-md md:text-xl font-sans rounded-lg border border-gray-300 focus:outline-none focus:border-gray-500 transition-colors"
 								/>
 							</div>
 							<div className="w-full flex justify-end">
