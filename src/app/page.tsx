@@ -6,15 +6,11 @@ import {
 	Lock,
 	Trash2,
 	Unlink,
-	Target,
-	Zap,
 	Calendar,
 	Sparkles,
 	FileText,
 	ShoppingCart,
 	ChefHat,
-	ArrowRight,
-	Clock,
 } from 'lucide-react';
 import EnhancedCarousel from './components/sections/EnhanceCarousel';
 
@@ -189,7 +185,7 @@ export default function Home() {
 								<dd className="mt-4 flex flex-auto flex-col text-base text-gray-600">
 									<p className="flex-auto">
 										Tell us your dietary preferences, schedule, and how many meals you need. Set it
-										once and we'll remember for next time.
+										once and we&apos;ll remember for next time.
 									</p>
 								</dd>
 							</div>
