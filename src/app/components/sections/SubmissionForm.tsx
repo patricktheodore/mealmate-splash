@@ -183,7 +183,7 @@ const SubmissionForm = () => {
 							</div>
 
 							{/* Form */}
-							<form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
+							<div className="w-full flex flex-col gap-6">
 								{formFields.map((field) => {
 									const IconComponent = field.icon;
 									const isFocused = focusedField === field.name;
@@ -191,16 +191,18 @@ const SubmissionForm = () => {
 									
 									return (
 										<div key={field.name} className="relative group">
-											<div className={`relative bg-background border-3 border-primary rounded-2xl shadow-[4px_4px_0px_0px_var(--primary)] transition-all duration-300 ${
-												isFocused || hasValue ? 'shadow-[2px_2px_0px_0px_var(--primary)] translate-x-[2px] translate-y-[2px]' : 'group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
+											<div className={`relative bg-background border-3 border-primary rounded-2xl transition-all duration-300 ${
+												isFocused 
+													? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1] translate-y-[2px]' 
+													: 'shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
 											}`}>
 												<div className="flex items-center gap-4 p-4">
 													<div className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
 														isFocused || hasValue 
-															? 'bg-primary border-primary shadow-[2px_2px_0px_0px_var(--primary)]' 
+															? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]' 
 															: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
 													}`}>
-														<IconComponent className={`size-6 ${isFocused || hasValue ? 'text-secondary' : 'text-primary'}`} strokeWidth={2.5} />
+														<IconComponent className={`size-6 ${isFocused || hasValue ? 'text-primary' : 'text-primary'}`} strokeWidth={2.5} />
 													</div>
 													<input
 														name={field.name}
@@ -213,7 +215,7 @@ const SubmissionForm = () => {
 														onChange={handleInputChange}
 														onFocus={() => setFocusedField(field.name)}
 														onBlur={() => setFocusedField(null)}
-														className="flex-1 text-lg md:text-xl font-medium bg-transparent border-none outline-none placeholder-foreground/50 text-foreground"
+														className="flex-1 text-lg md:text-xl font-medium bg-transparent border-none outline-none placeholder-primary/50 !text-primary"
 													/>
 												</div>
 											</div>
@@ -225,6 +227,7 @@ const SubmissionForm = () => {
 								<div className="flex justify-center mt-4">
 									<button
 										type="submit"
+										onClick={handleSubmit}
 										className="group bg-secondary hover:bg-secondary/90 border-4 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-lg py-4 px-8 md:py-5 md:px-12 rounded-2xl transition-all duration-300 shadow-[8px_8px_0px_0px_var(--foreground)] hover:shadow-[4px_4px_0px_0px_var(--foreground)] hover:translate-x-[4px] hover:translate-y-[4px] relative overflow-hidden cursor-pointer">
 										<span className="relative z-10 flex items-center gap-3">
 											Join the waitlist
@@ -266,7 +269,7 @@ const SubmissionForm = () => {
 										);
 									})}
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 				</div>
