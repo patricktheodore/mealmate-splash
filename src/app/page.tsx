@@ -93,8 +93,6 @@ export default function Home() {
 				</button>
 			</div>
 
-      <EnhancedCarousel />
-
 			{/* Problem Section */}
 			<div
 				id="problema"
@@ -102,10 +100,10 @@ export default function Home() {
 				<div className="mx-auto max-w-7xl">
 					<div className="mx-auto max-w-2xl lg:text-center">
 						<h2 className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500">
-							The current model is broken
+							The current model is broken.
 						</h2>
 						<p className="mt-2 text-[40px] md:text-[60px] xl:text-[80px] font-bold leading-[0.9] tracking-tighter text-gray-700">
-							Why meal kits don&apos;t work
+							Why meal kits don&apos;t work.
 						</p>
 					</div>
 					<div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -159,6 +157,9 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
+
+      <EnhancedCarousel />
+
 
 			{/* How it Works Section */}
 			<div className="h-screen w-full bg-background py-24 px-4 md:px-8 xl:px-12">

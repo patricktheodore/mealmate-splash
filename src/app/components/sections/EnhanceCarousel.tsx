@@ -170,7 +170,7 @@ const EnhancedCarousel = () => {
 
 	return (
 		<div className="h-screen w-full py-24 px-4 md:px-8 xl:px-12 overflow-hidden">
-			<div className="mx-auto px-6 lg:px-8">
+			<div className="mx-auto max-w-7xl px-6 lg:px-8">
 				<div className="mx-auto max-w-3xl lg:text-center mb-16">
 					<span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
 						Not another meal planning app.
