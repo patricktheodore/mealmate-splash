@@ -5,7 +5,6 @@ import {
 	FileText,
 	ShoppingCart,
 	ChefHat,
-	ArrowRight,
 } from 'lucide-react';
 
 interface Step {
@@ -108,13 +107,6 @@ const HowItWorksSection = () => {
 						{steps.map((step, index) => (
 							<div key={step.id} className="relative">
 								<StepCard step={step} />
-								{index < steps.length - 1 && (
-									<div className="flex justify-center my-4">
-										<div className="bg-primary text-secondary p-2 rounded-full shadow-[2px_2px_0px_0px_var(--foreground)]">
-											<ArrowRight className="size-5" strokeWidth={3} style={{transform: 'rotate(90deg)'}} />
-										</div>
-									</div>
-								)}
 							</div>
 						))}
 					</div>
