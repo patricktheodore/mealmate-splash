@@ -44,8 +44,8 @@ const ProblemSection = () => {
 
 	return (
 		<section
-			id="problema"
-			className="w-full w-full py-24 md:py-46 xl:py-68 px-4 md:px-8 xl:px-12 min-h-[600px] relative overflow-hidden">
+			id="problem"
+			className="w-full py-24 md:py-46 xl:py-68 px-4 md:px-8 xl:px-12 min-h-[600px] relative overflow-hidden">
 
 			<div className="mx-auto max-w-7xl relative z-10">
 				<div className="mx-auto max-w-3xl text-center mb-16">

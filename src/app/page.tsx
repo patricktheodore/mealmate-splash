@@ -16,7 +16,7 @@ export default function Home() {
 	};
 
 	const scrollDown = () => {
-		const nextSection = document.querySelector('#problema');
+		const nextSection = document.querySelector('#problem');
 		if (nextSection) {
 			nextSection.scrollIntoView({ behavior: 'smooth' });
 		}
