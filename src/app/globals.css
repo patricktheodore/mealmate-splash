@@ -1,41 +1,303 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F1F3E4;
-  --foreground: #171717;
-  --primary: #25551B;
-  --secondary: #E2F380;
-  --accent: #FFBDBD;
-  --button-bg: #E2F380;
-  --button-text: #171717;
-  --button-bg-hover: #bbcc5c;
+    --background: #F1F3E4;
+    --foreground: #171717;
+    --primary: #25551B;
+    --secondary: #E2F380;
+    --accent: #FFBDBD;
+    --button-bg: #E2F380;
+    --button-text: #171717;
+    --button-bg-hover: #bbcc5c;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-button-bg: var(--button-bg);
-  --color-button-text: var(--button-text);
-  --color-button-bg-hover: var(--button-bg-hover);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-accent: var(--accent);
+    --color-button-bg: var(--button-bg);
+    --color-button-text: var(--button-text);
+    --color-button-bg-hover: var(--button-bg-hover);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
 }
 
 button,
 input,
 select,
 textarea {
-  font-family: inherit;
-  color: inherit;
+    font-family: inherit;
+    color: inherit;
 }
 
 input {
-  width: 100%;
+    width: 100%;
+}
+
+/* Floating animation - gentle up and down movement */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Subtle pulse animation - gentle opacity and scale changes */
+@keyframes pulse-subtle {
+
+    0%,
+    100% {
+        opacity: var(--start-opacity, 0.1);
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: calc(var(--start-opacity, 0.1) * 1.8);
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-subtle {
+    animation: pulse-subtle 4s ease-in-out infinite;
+}
+
+/* Drift animation - horizontal floating movement */
+@keyframes drift {
+
+    0%,
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+
+    25% {
+        transform: translateX(4px) translateY(-2px) rotate(1deg);
+    }
+
+    50% {
+        transform: translateX(-2px) translateY(-4px) rotate(-1deg);
+    }
+
+    75% {
+        transform: translateX(-4px) translateY(-1px) rotate(0.5deg);
+    }
+}
+
+.animate-drift {
+    animation: drift 8s ease-in-out infinite;
+}
+
+/* Enhanced versions with more subtle movement */
+@keyframes float-gentle {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes pulse-very-subtle {
+
+    0%,
+    100% {
+        opacity: var(--start-opacity, 0.1);
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: calc(var(--start-opacity, 0.1) * 1.4);
+        transform: scale(1.02);
+    }
+}
+
+@keyframes drift-slow {
+
+    0%,
+    100% {
+        transform: translateX(0px) translateY(0px);
+    }
+
+    33% {
+        transform: translateX(2px) translateY(-1px);
+    }
+
+    66% {
+        transform: translateX(-1px) translateY(-2px);
+    }
+}
+
+/* Alternative gentle animation classes */
+.animate-float-gentle {
+    animation: float-gentle 5s ease-in-out infinite;
+}
+
+.animate-pulse-very-subtle {
+    animation: pulse-very-subtle 3s ease-in-out infinite;
+}
+
+.animate-drift-slow {
+    animation: drift-slow 10s ease-in-out infinite;
+}
+
+/* Breathing effect for variety */
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: var(--start-opacity, 0.1);
+    }
+
+    50% {
+        transform: scale(1.03);
+        opacity: calc(var(--start-opacity, 0.1) * 1.6);
+    }
+}
+
+.animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* Slow rotation for subtle movement */
+@keyframes rotate-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-rotate-slow {
+    animation: rotate-slow 20s linear infinite;
+}
+
+/* Combined movement for more complex animation */
+@keyframes float-and-drift {
+
+    0%,
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+
+    25% {
+        transform: translateX(2px) translateY(-3px) rotate(1deg);
+    }
+
+    50% {
+        transform: translateX(-1px) translateY(-6px) rotate(0deg);
+    }
+
+    75% {
+        transform: translateX(-2px) translateY(-2px) rotate(-1deg);
+    }
+}
+
+.animate-float-and-drift {
+    animation: float-and-drift 7s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    33% {
+        transform: translateY(-10px) rotate(1deg);
+    }
+
+    66% {
+        transform: translateY(5px) rotate(-1deg);
+    }
+}
+
+@keyframes pulse-subtle {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-subtle {
+    animation: pulse-subtle 4s ease-in-out infinite;
+}
+
+@keyframes drift {
+
+    0%,
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+
+    25% {
+        transform: translateX(10px) translateY(-5px) rotate(1deg);
+    }
+
+    50% {
+        transform: translateX(-5px) translateY(-10px) rotate(-1deg);
+    }
+
+    75% {
+        transform: translateX(-10px) translateY(5px) rotate(0.5deg);
+    }
+}
+
+.animate-drift {
+    animation: drift 8s ease-in-out infinite;
+}
+
+@keyframes float-money {
+
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-15px) translateX(5px) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(-5px) translateX(-10px) rotate(-3deg);
+    }
+
+    75% {
+        transform: translateY(-20px) translateX(8px) rotate(2deg);
+    }
+}
+
+.animate-float-money {
+    animation: float-money 8s ease-in-out infinite;
 }
