@@ -13,7 +13,10 @@ import {
 	FileText,
 	ShoppingCart,
 	ChefHat,
+	ArrowRight,
+	Clock,
 } from 'lucide-react';
+import EnhancedCarousel from './components/sections/EnhanceCarousel';
 
 export default function Home() {
 	const scrollToForm = () => {
@@ -64,7 +67,7 @@ export default function Home() {
 			{/* Hero Section */}
 			<div className="h-screen w-full flex flex-col justify-center items-center gap-4 md:gap-8 xl:gap-12 px-4 md:px-8 xl:px-12 py-24">
 				<h2 className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500">Meal kits are broken</h2>
-				<h1 className="mb-12 md:mb-8 text-[48px] md:text-[110px] xl:text-[150px] leading-[0.9] tracking-tighter text-center text-gray-700">
+				<h1 className="mb-12 md:mb-8 text-[48px] md:text-[110px] xl:text-[150px] leading-[0.9] font-bold tracking-tighter text-center text-gray-700">
 					We&apos;re fixing it.
 				</h1>
 				{/* <p className="text-lg md:text-xl xl:text-2xl text-center text-gray-600 max-w-4xl mb-8">
@@ -90,6 +93,8 @@ export default function Home() {
 				</button>
 			</div>
 
+      <EnhancedCarousel />
+
 			{/* Problem Section */}
 			<div
 				id="problema"
@@ -99,12 +104,8 @@ export default function Home() {
 						<h2 className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500">
 							The current model is broken
 						</h2>
-						<p className="mt-2 text-[40px] md:text-[60px] xl:text-[80px] leading-[0.9] tracking-tighter text-gray-700">
+						<p className="mt-2 text-[40px] md:text-[60px] xl:text-[80px] font-bold leading-[0.9] tracking-tighter text-gray-700">
 							Why meal kits don&apos;t work
-						</p>
-						<p className="mt-6 text-lg md:text-xl text-gray-600">
-							Most customers abandon meal kit services quickly, with only ~20% staying beyond 12 months.
-							Here&apos;s why.
 						</p>
 					</div>
 					<div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -159,94 +160,6 @@ export default function Home() {
 				</div>
 			</div>
 
-			{/* Solution Section */}
-			<div className="h-screen w-full bg-secondary py-24 px-4 md:px-8 xl:px-12">
-				<div className="mx-auto max-w-7xl px-6 lg:px-8">
-					<div className="mx-auto max-w-2xl lg:text-center">
-						<span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
-							Not another meal planning app.
-						</span>
-						<h2 className="text-[40px] md:text-[60px] xl:text-[80px] leading-[0.9] tracking-tighter text-gray-700 mb-8">
-							Something better. <br />
-							Built for real life.
-						</h2>
-						<p className="mt-6 text-lg md:text-xl text-gray-600">
-							The next evolution of meal planning — personalised, flexible, and half the price of
-							traditional meal kits. No subscriptions, no waste, just smart meal planning that works for
-							you.
-						</p>
-					</div>
-					<div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-						<dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-							<div className="flex flex-col">
-								<dt className="flex items-center gap-x-3 text-2xl font-bold text-gray-700">
-									<div className="flex size-10 items-center justify-center rounded-lg bg-primary">
-										<DollarSign className="size-6 text-white" />
-									</div>
-									Save money
-								</dt>
-								<dd className="mt-4 flex flex-auto flex-col text-lg text-gray-600">
-									<p className="flex-auto">
-										Same quality meals at half the price of traditional meal kits by shopping
-										smarter, not harder. Get premium ingredients without the premium markup.
-									</p>
-									<p className="mt-6">
-										<a
-											href="#pricing"
-											className="text-sm font-semibold text-primary tracking-wide uppercase">
-											See pricing <span aria-hidden="true">→</span>
-										</a>
-									</p>
-								</dd>
-							</div>
-							<div className="flex flex-col">
-								<dt className="flex items-center gap-x-3 text-2xl font-bold text-gray-700">
-									<div className="flex size-10 items-center justify-center rounded-lg bg-primary">
-										<Target className="size-6 text-white" />
-									</div>
-									Stay flexible
-								</dt>
-								<dd className="mt-4 flex flex-auto flex-col text-lg text-gray-600">
-									<p className="flex-auto">
-										Choose your meals, portions, and ingredients on your own terms — no more rigid
-										subscriptions. Meal planning that adapts to your lifestyle, not the other way
-										around.
-									</p>
-									<p className="mt-6">
-										<a
-											href="#how-it-works"
-											className="text-sm font-semibold text-primary tracking-wide uppercase">
-											Learn how <span aria-hidden="true">→</span>
-										</a>
-									</p>
-								</dd>
-							</div>
-							<div className="flex flex-col">
-								<dt className="flex items-center gap-x-3 text-2xl font-bold text-gray-700">
-									<div className="flex size-10 items-center justify-center rounded-lg bg-primary">
-										<Zap className="size-6 text-white" />
-									</div>
-									Simplify planning
-								</dt>
-								<dd className="mt-4 flex flex-auto flex-col text-lg text-gray-600">
-									<p className="flex-auto">
-										Personalised recipes, smart grocery lists, and one-click checkout — all in one
-										seamless experience. From meal inspiration to your doorstep in minutes.
-									</p>
-									<p className="mt-6">
-										<a
-											href="#waitlist"
-											className="text-sm font-semibold text-primary tracking-wide uppercase">
-											Get started <span aria-hidden="true">→</span>
-										</a>
-									</p>
-								</dd>
-							</div>
-						</dl>
-					</div>
-				</div>
-			</div>
-
 			{/* How it Works Section */}
 			<div className="h-screen w-full bg-background py-24 px-4 md:px-8 xl:px-12">
 				<div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -254,8 +167,8 @@ export default function Home() {
 						<span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
 							Simple, smart, seamless
 						</span>
-						<h2 className="text-[40px] md:text-[60px] xl:text-[80px] leading-[0.9] tracking-tighter text-gray-700 mb-8">
-							How MealMate works
+						<h2 className="text-[40px] md:text-[60px] xl:text-[80px] leading-[0.9] font-bold tracking-tighter text-gray-700 mb-8">
+							How it works
 						</h2>
 						<p className="mt-6 text-lg md:text-xl text-gray-600">
 							From meal inspiration to your kitchen in just five simple steps. No complex workflows, no
