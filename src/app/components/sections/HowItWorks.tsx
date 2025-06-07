@@ -104,7 +104,7 @@ const HowItWorksSection = () => {
 
 					{/* Mobile: Vertical layout */}
 					<div className="lg:hidden space-y-6">
-						{steps.map((step, index) => (
+						{steps.map((step) => (
 							<div key={step.id} className="relative">
 								<StepCard step={step} />
 							</div>
