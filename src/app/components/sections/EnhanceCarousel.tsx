@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
 	Target,
 	Sparkles,
@@ -21,10 +21,6 @@ const EnhancedCarousel = () => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [canScrollLeft, setCanScrollLeft] = useState(false);
 	const [canScrollRight, setCanScrollRight] = useState(true);
-	const [touchStartTime, setTouchStartTime] = useState(0);
-	const [lastTouchX, setLastTouchX] = useState(0);
-	const [velocity, setVelocity] = useState(0);
-	const [isInertiaScrolling, setIsInertiaScrolling] = useState(false);
 
 	const cards = [
 		{
@@ -109,74 +105,29 @@ const EnhancedCarousel = () => {
 		},
 	];
 
-	// Get card width based on screen size
-	const getCardWidth = useCallback(() => {
-		if (typeof window !== 'undefined') {
-			if (window.innerWidth >= 1280) return 520 + 32; // xl
-			if (window.innerWidth >= 768) return 460 + 32;  // md
-			return 380 + 32; // mobile
-		}
-		return 412; // fallback
-	}, []);
-
 	// Check scroll position and update navigation state
-	const checkScrollPosition = useCallback(() => {
+	const checkScrollPosition = () => {
 		if (scrollContainerRef.current) {
 			const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-			setCanScrollLeft(scrollLeft > 10);
-			setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+			setCanScrollLeft(scrollLeft > 0);
+			setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
 
 			// Update current index based on scroll position
-			const cardWidth = getCardWidth();
+			const cardWidth = 420 + 32; // card width + gap
 			const newIndex = Math.round(scrollLeft / cardWidth);
-			setCurrentIndex(Math.max(0, Math.min(cards.length - 1, newIndex)));
+			setCurrentIndex(newIndex);
 		}
-	}, [getCardWidth, cards.length]);
+	};
 
-	// Smooth scroll to specific card with momentum
-	const scrollToCard = useCallback((index: number, smooth: boolean = true) => {
+	const scrollToCard = (index: number) => {
 		if (scrollContainerRef.current) {
-			const cardWidth = getCardWidth();
-			const targetScroll = index * cardWidth;
-			
-			if (smooth) {
-				scrollContainerRef.current.scrollTo({
-					left: targetScroll,
-					behavior: 'smooth',
-				});
-			} else {
-				scrollContainerRef.current.scrollLeft = targetScroll;
-			}
+			const cardWidth = 420 + 32; // card width + gap
+			scrollContainerRef.current.scrollTo({
+				left: index * cardWidth,
+				behavior: 'smooth',
+			});
 		}
-	}, [getCardWidth]);
-
-	// Apply momentum scrolling after touch ends
-	const applyMomentumScroll = useCallback(() => {
-		if (!scrollContainerRef.current || Math.abs(velocity) < 0.1) return;
-
-		setIsInertiaScrolling(true);
-		const container = scrollContainerRef.current;
-		const startScroll = container.scrollLeft;
-		const cardWidth = getCardWidth();
-		
-		// Calculate how far we should scroll based on velocity
-		const momentumDistance = velocity * 300; // Adjust multiplier for feel
-		let targetScroll = startScroll + momentumDistance;
-		
-		// Snap to nearest card
-		const targetIndex = Math.round(targetScroll / cardWidth);
-		const clampedIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
-		targetScroll = clampedIndex * cardWidth;
-
-		// Smooth scroll to target
-		container.scrollTo({
-			left: targetScroll,
-			behavior: 'smooth'
-		});
-
-		// Reset inertia state after animation
-		setTimeout(() => setIsInertiaScrolling(false), 500);
-	}, [velocity, getCardWidth, cards.length]);
+	};
 
 	const scrollLeftHandler = () => {
 		const newIndex = Math.max(0, currentIndex - 1);
@@ -188,21 +139,19 @@ const EnhancedCarousel = () => {
 		scrollToCard(newIndex);
 	};
 
-	// Enhanced mouse events with better feedback
 	const handleMouseDown = (e: React.MouseEvent) => {
 		if (!scrollContainerRef.current) return;
 		setIsDragging(true);
 		setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
 		setScrollLeft(scrollContainerRef.current.scrollLeft);
 		scrollContainerRef.current.style.cursor = 'grabbing';
-		scrollContainerRef.current.style.userSelect = 'none';
 	};
 
 	const handleMouseMove = (e: React.MouseEvent) => {
 		if (!isDragging || !scrollContainerRef.current) return;
 		e.preventDefault();
 		const x = e.pageX - scrollContainerRef.current.offsetLeft;
-		const walk = (x - startX) * 1.5; // Slightly reduced for better control
+		const walk = (x - startX) * 2; // Scroll speed multiplier
 		scrollContainerRef.current.scrollLeft = scrollLeft - walk;
 	};
 
@@ -210,115 +159,43 @@ const EnhancedCarousel = () => {
 		if (!scrollContainerRef.current) return;
 		setIsDragging(false);
 		scrollContainerRef.current.style.cursor = 'grab';
-		scrollContainerRef.current.style.userSelect = '';
-		
-		// Snap to nearest card after mouse drag
-		setTimeout(() => {
-			const cardWidth = getCardWidth();
-			const currentScroll = scrollContainerRef.current?.scrollLeft || 0;
-			const targetIndex = Math.round(currentScroll / cardWidth);
-			scrollToCard(targetIndex);
-		}, 50);
 	};
 
 	const handleMouseLeave = () => {
 		if (!scrollContainerRef.current) return;
 		setIsDragging(false);
 		scrollContainerRef.current.style.cursor = 'grab';
-		scrollContainerRef.current.style.userSelect = '';
 	};
 
-	// Enhanced touch events with velocity tracking and momentum
 	const handleTouchStart = (e: React.TouchEvent) => {
 		if (!scrollContainerRef.current) return;
 		setIsDragging(true);
-		setTouchStartTime(Date.now());
-		const touchX = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
-		setStartX(touchX);
-		setLastTouchX(touchX);
+		setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
 		setScrollLeft(scrollContainerRef.current.scrollLeft);
-		setVelocity(0);
-		
-		// Prevent default to avoid interference with native scrolling
-		e.preventDefault();
 	};
 
 	const handleTouchMove = (e: React.TouchEvent) => {
 		if (!isDragging || !scrollContainerRef.current) return;
-		e.preventDefault(); // Prevent page scroll
-		
-		const currentTime = Date.now();
 		const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
-		const walk = (x - startX) * 1.2; // Optimized for touch
-		
-		// Calculate velocity for momentum
-		const timeDelta = currentTime - touchStartTime;
-		if (timeDelta > 0) {
-			const newVelocity = (x - lastTouchX) / Math.max(timeDelta, 16); // Prevent division by very small numbers
-			setVelocity(newVelocity);
-		}
-		
+		const walk = (x - startX) * 2;
 		scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-		setLastTouchX(x);
 	};
 
 	const handleTouchEnd = () => {
 		setIsDragging(false);
-		
-		// Apply momentum only if there was significant velocity
-		if (Math.abs(velocity) > 0.3) {
-			applyMomentumScroll();
-		} else {
-			// Snap to nearest card for small movements
-			setTimeout(() => {
-				const cardWidth = getCardWidth();
-				const currentScroll = scrollContainerRef.current?.scrollLeft || 0;
-				const targetIndex = Math.round(currentScroll / cardWidth);
-				scrollToCard(targetIndex);
-			}, 50);
-		}
 	};
-
-	// Handle scroll events (for manual scrolling)
-	const handleScroll = useCallback(() => {
-		if (!isInertiaScrolling && !isDragging) {
-			checkScrollPosition();
-		}
-	}, [checkScrollPosition, isInertiaScrolling, isDragging]);
-
-	// Keyboard navigation for accessibility
-	const handleKeyDown = useCallback((e: KeyboardEvent) => {
-		if (e.key === 'ArrowLeft') {
-			e.preventDefault();
-			scrollLeftHandler();
-		} else if (e.key === 'ArrowRight') {
-			e.preventDefault();
-			scrollRightHandler();
-		}
-	}, [currentIndex]);
 
 	useEffect(() => {
 		const container = scrollContainerRef.current;
 		if (container) {
-			container.addEventListener('scroll', handleScroll, { passive: true });
+			container.addEventListener('scroll', checkScrollPosition);
 			checkScrollPosition();
 
-			// Add keyboard navigation
-			document.addEventListener('keydown', handleKeyDown);
-
-			// Handle window resize for responsive card width
-			const handleResize = () => {
-				checkScrollPosition();
-			};
-			window.addEventListener('resize', handleResize, { passive: true });
-
 			return () => {
-				container.removeEventListener('scroll', handleScroll);
-				document.removeEventListener('keydown', handleKeyDown);
-				window.removeEventListener('resize', handleResize);
+				container.removeEventListener('scroll', checkScrollPosition);
 			};
 		}
-	}, [handleScroll, handleKeyDown, checkScrollPosition]);
+	}, []);
 
 	return (
 		<section className="w-full py-24 md:py-46 xl:py-68 overflow-hidden">
@@ -338,63 +215,47 @@ const EnhancedCarousel = () => {
                     <button
                         onClick={scrollLeftHandler}
                         disabled={!canScrollLeft}
-                        aria-label="Previous card"
-                        className={`bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-3 md:p-3 lg:p-4 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[2px_2px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--primary)] active:translate-x-[3px] active:translate-y-[3px] touch-manipulation ${
+                        className={`bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-3 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[2px_2px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px] ${
                             !canScrollLeft ? 'opacity-50 cursor-not-allowed' : ''
                         }`}>
                         <ChevronLeft
-                            className="w-5 h-5 md:w-6 md:h-6"
+                            className="w-5 h-5"
                             strokeWidth={3}
                         />
                     </button>
                     <button
                         onClick={scrollRightHandler}
                         disabled={!canScrollRight}
-                        aria-label="Next card"
-                        className={`bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-3 md:p-3 lg:p-4 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[2px_2px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-[1px_1px_0px_0px_var(--primary)] active:translate-x-[3px] active:translate-y-[3px] touch-manipulation ${
+                        className={`bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-3 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[2px_2px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px] ${
                             !canScrollRight ? 'opacity-50 cursor-not-allowed' : ''
                         }`}>
                         <ChevronRight
-                            className="w-5 h-5 md:w-6 md:h-6"
+                            className="w-5 h-5"
                             strokeWidth={3}
                         />
                     </button>
                 </div>
 
-				<div className="relative">
+				<div className="relative ">
 					<div
 						ref={scrollContainerRef}
-						className="flex gap-8 overflow-x-auto pb-8 px-2 cursor-grab select-none scroll-smooth"
-						style={{ 
-							scrollbarWidth: 'none', 
-							msOverflowStyle: 'none',
-							scrollSnapType: 'x mandatory',
-							WebkitOverflowScrolling: 'touch',
-							overscrollBehaviorX: 'contain'
-						}}
+						className="flex gap-8 overflow-x-auto pb-8 px-2 cursor-grab select-none"
+						style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
 						onMouseDown={handleMouseDown}
 						onMouseMove={handleMouseMove}
 						onMouseUp={handleMouseUp}
 						onMouseLeave={handleMouseLeave}
 						onTouchStart={handleTouchStart}
 						onTouchMove={handleTouchMove}
-						onTouchEnd={handleTouchEnd}
-						role="region"
-						aria-label="Feature carousel"
-						tabIndex={0}>
+						onTouchEnd={handleTouchEnd}>
                         <div className="flex-none w-[20px] md:w-[100px] xl:w-[400px]"></div>
 						{cards.map((card) => {
 							return (
 								<div
 									key={card.id}
-									className="flex-none w-[380px] md:w-[460px] xl:w-[520px] snap-start snap-always"
-									style={{ scrollSnapAlign: 'start' }}>
+									className="flex-none w-[380px] md:w-[460px] xl:w-[520px] snap-start">
 									<div
-										className={`relative h-[480px] md:h-[540px] xl:h-[600px] rounded-3xl ${card.bgColor} border-2 border-primary p-8 shadow-[8px_8px_0px_0px_var(--primary)] transform hover:shadow-[4px_4px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 ${
-											isDragging ? 'transition-none' : ''
-										}`}
-										role="article"
-										aria-label={`Feature: ${card.title}`}>
+										className={`relative h-[480px] md:h-[540px] xl:h-[600px] rounded-3xl ${card.bgColor} border-2 border-primary p-8 shadow-[8px_8px_0px_0px_var(--primary)] transform hover:shadow-[4px_4px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300`}>
 										<div className="relative z-20 h-full flex flex-col">
 											<div className="flex items-center gap-3 mb-6">
 												<div>
@@ -414,9 +275,9 @@ const EnhancedCarousel = () => {
 												{/* Steps for convenience card */}
 												{card.steps && (
 													<div className="space-y-4">
-														{card.steps.map((step, stepIndex) => (
+														{card.steps.map((step, index) => (
 															<div
-																key={stepIndex}
+																key={index}
 																className={`flex items-center gap-3 p-3 ${
 																	step.status === 'active'
 																		? 'bg-secondary'
@@ -446,9 +307,9 @@ const EnhancedCarousel = () => {
 												{/* Price comparison for save money card */}
 												{card.comparison && (
 													<div className="space-y-3">
-														{card.comparison.map((item, itemIndex) => (
+														{card.comparison.map((item, index) => (
 															<div
-																key={itemIndex}
+																key={index}
 																className={`flex justify-between items-center p-4 ${
 																	item.isOurs
 																		? 'bg-primary'
@@ -505,13 +366,13 @@ const EnhancedCarousel = () => {
 												{/* Features for planning card */}
 												{card.features && (
 													<div className="space-y-3">
-														{card.features.map((feature, featureIndex) => {
+														{card.features.map((feature, index) => {
 															const FeatureIcon = feature.icon;
 															return (
 																<div
-																	key={featureIndex}
+																	key={index}
 																	className={`${
-																		featureIndex === 0 ? 'bg-primary/10' : 'bg-accent'
+																		index === 0 ? 'bg-primary/10' : 'bg-accent'
 																	} relative border-2 border-primary rounded-xl shadow-[2px_2px_0px_0px_var(--primary)] p-4 z-30`}>
 																	<div className="flex items-center gap-3">
 																		<div className="w-8 md:w-10 xl:w12 h-8 md:h-10 xl:h12 bg-secondary rounded-lg flex items-center justify-center border shadow-[2px_2px_0px_0px_var(--primary)]">
@@ -535,11 +396,11 @@ const EnhancedCarousel = () => {
                                                 {/* Recipe categories for discover flavors card */}
 												{card.recipeCategories && (
 													<div className="space-y-3">
-														{card.recipeCategories.map((category, categoryIndex) => {
+														{card.recipeCategories.map((category, index) => {
 															const CategoryIcon = category.icon;
 															return (
 																<div
-																	key={categoryIndex}
+																	key={index}
 																	className="bg-background border-2 border-primary rounded-xl shadow-[2px_2px_0px_0px_var(--primary)] p-4">
 																	<div className="flex items-center gap-3">
 																		<div className="w-10 md:w-12 xl:w-14 h-10 md:h-12 xl:h-14 bg-secondary rounded-xl flex items-center justify-center border-2 border-foreground shadow-[2px_2px_0px_0px_var(--foreground)]">
@@ -563,11 +424,11 @@ const EnhancedCarousel = () => {
                                                 {/* Smart features for food waste card */}
 												{card.smartFeatures && (
 													<div className="space-y-3">
-														{card.smartFeatures.map((feature, featureIndex) => {
+														{card.smartFeatures.map((feature, index) => {
 															const FeatureIcon = feature.icon;
 															return (
 																<div
-																	key={featureIndex}
+																	key={index}
 																	className={`${feature.status === 'active' ? 'bg-secondary' : 'bg-accent'} border-2 border-primary rounded-xl shadow-[2px_2px_0px_0px_var(--primary)] p-4`}>
 																	<div className="flex items-center gap-3">
 																		<div className="w-10 md:w-12 xl:w-14 h-10 md:h-12 xl:h-14 bg-secondary rounded-xl flex items-center justify-center border-2 border-primary shadow-[2px_2px_0px_0px_var(--primary)]">
@@ -654,27 +515,24 @@ const EnhancedCarousel = () => {
                         <div className="flex-none w-[20px] md:w-[100px] xl:w-[400px]"></div>
 					</div>
 
-					{/* Enhanced Scroll Indicator Pill */}
+					{/* Scroll Indicator Pill */}
 					<div className="flex justify-center mt-6">
 						<div className="bg-background border-2 border-primary rounded-full px-4 py-2 shadow-[2px_2px_0px_0px_var(--primary)]">
 							<div className="flex items-center gap-2">
 								<div className="flex gap-1">
 									{cards.map((_, index) => (
-										<button
+										<div
 											key={index}
-											onClick={() => scrollToCard(index)}
-											className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:scale-150 touch-manipulation ${
-												index === currentIndex ? 'bg-primary scale-125' : 'bg-primary/30 hover:bg-primary/50'
+											className={`w-2 h-2 rounded-full transition-all duration-300 ${
+												index === currentIndex ? 'bg-primary scale-125' : 'bg-primary/30'
 											}`}
-											aria-label={`Go to slide ${index + 1}`}
 										/>
 									))}
 								</div>
 								<span className="text-xs font-medium text-primary ml-2">
 									{currentIndex + 1} of {cards.length}
 								</span>
-                                <span className="text-xs text-primary/70 ml-1 hidden sm:inline">• Drag to explore</span>
-                                <span className="text-xs text-primary/70 ml-1 sm:hidden">• Swipe to explore</span>
+                                <span className="text-xs text-primary/70 ml-1">• Drag to explore</span>
 							</div>
 						</div>
 					</div>
@@ -685,69 +543,6 @@ const EnhancedCarousel = () => {
 				/* Hide scrollbar */
 				.overflow-x-auto::-webkit-scrollbar {
 					display: none;
-				}
-				
-				/* Smooth scroll snap behavior */
-				@supports (scroll-snap-type: x mandatory) {
-					.scroll-smooth {
-						scroll-behavior: smooth;
-					}
-				}
-				
-				/* Enhance touch responsiveness */
-				.touch-manipulation {
-					touch-action: manipulation;
-				}
-				
-				/* Custom animations for floating elements */
-				@keyframes float {
-					0%, 100% { transform: translateY(0px) rotate(0deg); }
-					50% { transform: translateY(-10px) rotate(180deg); }
-				}
-				
-				@keyframes pulse-subtle {
-					0%, 100% { opacity: 0.1; transform: scale(1); }
-					50% { opacity: 0.2; transform: scale(1.1); }
-				}
-				
-				@keyframes drift {
-					0%, 100% { transform: translateX(0px); }
-					50% { transform: translateX(10px); }
-				}
-				
-				@keyframes float-gentle {
-					0%, 100% { transform: translateY(0px); }
-					50% { transform: translateY(-5px); }
-				}
-				
-				@keyframes breathe {
-					0%, 100% { transform: scale(1); }
-					50% { transform: scale(1.05); }
-				}
-				
-				@keyframes float-and-drift {
-					0%, 100% { transform: translateY(0px) translateX(0px); }
-					25% { transform: translateY(-5px) translateX(5px); }
-					75% { transform: translateY(5px) translateX(-5px); }
-				}
-				
-				.animate-float { animation: float 6s ease-in-out infinite; }
-				.animate-pulse-subtle { animation: pulse-subtle 4s ease-in-out infinite; }
-				.animate-drift { animation: drift 8s ease-in-out infinite; }
-				.animate-float-gentle { animation: float-gentle 5s ease-in-out infinite; }
-				.animate-breathe { animation: breathe 7s ease-in-out infinite; }
-				.animate-float-and-drift { animation: float-and-drift 10s ease-in-out infinite; }
-				
-				/* Reduce motion for users who prefer it */
-				@media (prefers-reduced-motion: reduce) {
-					.animate-float,
-					.animate-pulse-subtle,
-					.animate-drift,
-					.animate-float-gentle,
-					.animate-breathe,
-					.animate-float-and-drift {
-						animation: none;
-					}
 				}
 			`}</style>
 		</section>
