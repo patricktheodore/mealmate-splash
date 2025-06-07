@@ -262,7 +262,7 @@ const EnhancedCarousel = () => {
 		setLastTouchX(x);
 	};
 
-	const handleTouchEnd = (e: React.TouchEvent) => {
+	const handleTouchEnd = () => {
 		setIsDragging(false);
 		
 		// Apply momentum only if there was significant velocity
@@ -383,7 +383,7 @@ const EnhancedCarousel = () => {
 						aria-label="Feature carousel"
 						tabIndex={0}>
                         <div className="flex-none w-[20px] md:w-[100px] xl:w-[400px]"></div>
-						{cards.map((card, index) => {
+						{cards.map((card) => {
 							return (
 								<div
 									key={card.id}
