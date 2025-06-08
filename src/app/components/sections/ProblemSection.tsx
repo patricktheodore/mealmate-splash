@@ -65,7 +65,7 @@ const ProblemSection = () => {
 								key={problem.id}
 								className="group relative">
 								<div
-									className={`relative h-[280px] md:h-[320px] xl:h-[360px] rounded-3xl ${problem.bgColor} border-4 border-primary p-8 shadow-[6px_6px_0px_0px_var(--primary)] transform hover:shadow-[6px_6px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 cursor-pointer`}>
+									className={`relative h-[280px] md:h-[320px] rounded-3xl ${problem.bgColor} border-4 border-primary p-8 shadow-[6px_6px_0px_0px_var(--primary)] transform hover:shadow-[6px_6px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 cursor-pointer`}>
 									
 									{/* Icon container */}
 									<div className="flex items-center gap-4 mb-6">

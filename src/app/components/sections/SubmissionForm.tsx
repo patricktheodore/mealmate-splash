@@ -51,14 +51,14 @@ const SubmissionForm = () => {
 		{
 			name: 'location',
 			type: 'text',
-			placeholder: 'Your location (optional)',
+			placeholder: 'Your location',
 			icon: MapPin,
 			required: false,
 		},
 		{
 			name: 'age',
 			type: 'number',
-			placeholder: 'Your age (optional)',
+			placeholder: 'Your age',
 			icon: Calendar,
 			required: false,
 			min: '1',
@@ -153,7 +153,7 @@ const SubmissionForm = () => {
 						<div className="flex flex-col gap-8 md:gap-12 relative z-10">
 							{/* Header */}
 							<div className="text-center">
-								<h3 className="text-[40px] md:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-6">
+								<h3 id='form' className="text-[40px] md:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-6">
 									Ready to{' '}
 									<span className="relative">
 										revolutionise

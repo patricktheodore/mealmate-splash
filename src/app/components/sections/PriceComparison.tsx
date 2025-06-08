@@ -138,7 +138,7 @@ const PriceComparisonSection = () => {
 								key={competitor.id}
 								className={`group relative ${competitor.isWinner ? 'order-first' : ''}`}>
 								<div
-									className={`relative ${competitor.cardBg} border-4 border-primary rounded-3xl p-6 md:p-8 ${
+									className={`relative ${competitor.cardBg} border-4 border-primary rounded-3xl p-4 md:p-6 ${
 										competitor.isWinner 
 											? 'shadow-[12px_12px_0px_0px_var(--primary)] hover:shadow-[6px_6px_0px_0px_var(--primary)]' 
 											: 'shadow-[6px_6px_0px_0px_var(--primary)] hover:shadow-[4px_4px_0px_0px_var(--primary)]'
@@ -156,7 +156,7 @@ const PriceComparisonSection = () => {
 
 									{/* Savings badge for competitors */}
 									{competitor.savings && (
-										<div className="absolute -top-4 -left-4 bg-red-500 text-white px-3 py-1 rounded-full border-2 border-foreground shadow-[4px_4px_0px_0px_var(--foreground)] text-xs font-bold">
+										<div className="absolute -top-4 -left-4 bg-red-500 text-white px-3 py-1 rounded-full border-2 border-primary shadow-[2px_2px_0px_0px_var(--primary)] text-xs font-bold">
 											+{competitor.savings}%
 										</div>
 									)}
@@ -238,11 +238,11 @@ const PriceComparisonSection = () => {
 						</div>
 					</div>
 					
-					{/* <div className="bg-accent/50 border border-primary/30 rounded-2xl px-6 py-4 max-w-3xl">
+					<div className="bg-accent/50 border border-primary/30 rounded-2xl px-6 py-4 max-w-3xl">
 						<p className="text-xs md:text-sm text-foreground/70 text-center leading-relaxed">
 							*Per serving comparison based on 2-person plans, excluding promotional pricing. MealMate pricing includes Woolworths delivery fees. Savings calculated against standard retail pricing as of 2025.
 						</p>
-					</div> */}
+					</div>
 				</div>
 			</div>
 		</div>

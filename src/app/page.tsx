@@ -9,7 +9,7 @@ import SubmissionForm from './components/sections/SubmissionForm';
 
 export default function Home() {
 	const scrollToForm = () => {
-		const formElement = document.querySelector('form');
+		const formElement = document.querySelector('#form');
 		if (formElement) {
 			formElement.scrollIntoView({ behavior: 'smooth' });
 		}
@@ -36,7 +36,7 @@ export default function Home() {
 					/>
 					<Image
 						className="block md:hidden"
-						src="/images/mealmate-logo-small.png"
+						src="/images/mealmate-m.png"
 						alt="MealMate Logo"
 						height={48}
 						width={48}
