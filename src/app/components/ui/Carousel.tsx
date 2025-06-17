@@ -34,7 +34,8 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 	const [canScrollRight, setCanScrollRight] = useState(true);
 	const [cardWidth, setCardWidth] = useState(340);
 	const [leftSpacerWidth, setLeftSpacerWidth] = useState(20);
-	// const [lastScrollLeft, setLastScrollLeft] = useState(0);
+    const [touchStartTime, setTouchStartTime] = useState(0);
+    const [touchStartScrollLeft, setTouchStartScrollLeft] = useState(0);
 
 	// Update card width and spacer based on screen size
 	useEffect(() => {
@@ -64,37 +65,22 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 
 	// Check scroll position and update navigation state
 	const checkScrollPosition = () => {
-		if (scrollContainerRef.current) {
-			const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-			setCanScrollLeft(scrollLeft > 10); // Small threshold to account for rounding
-			setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setCanScrollLeft(scrollLeft > 10);
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
 
-			// Update current index based on scroll position with more lenient threshold
-			// Account for the left spacer when calculating index
-			const adjustedScrollLeft = scrollLeft + leftSpacerWidth;
-			const gap = 32; // gap between cards
-			const cardWithGap = cardWidth + gap;
-			
-			// Calculate progress through current card transition
-			const rawIndex = adjustedScrollLeft / cardWithGap;
-			const baseIndex = Math.floor(rawIndex);
-			const progress = rawIndex - baseIndex;
-			
-			// Use a lower threshold (30%) to make advancing easier
-			// This means you only need to scroll 30% to the next card instead of 50%
-			let newIndex;
-			if (progress >= 0.3) {
-				newIndex = baseIndex + 1;
-			} else {
-				newIndex = baseIndex;
-			}
-			
-			// Ensure index is within bounds
-			newIndex = Math.max(0, Math.min(cards.length - 1, newIndex));
-			setCurrentIndex(newIndex);
-			// setLastScrollLeft(scrollLeft);
-		}
-	};
+            // Update current index with lower threshold
+            const adjustedScrollLeft = scrollLeft + leftSpacerWidth;
+            const gap = 32;
+            const cardWithGap = cardWidth + gap;
+            
+            // Use 0.3 threshold instead of 0.5 (Math.round)
+            // This means you only need to scroll 30% of the card to snap to the next one
+            const newIndex = Math.floor((adjustedScrollLeft + cardWithGap * 0.3) / cardWithGap);
+            setCurrentIndex(Math.max(0, Math.min(cards.length - 1, newIndex)));
+        }
+    };
 
 	const scrollToCard = (index: number) => {
 		if (scrollContainerRef.current) {
@@ -154,30 +140,48 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 	};
 
 	const handleTouchStart = (e: React.TouchEvent) => {
-		if (!scrollContainerRef.current) return;
-		const touch = e.touches[0];
-		setStartX(touch.pageX - scrollContainerRef.current.offsetLeft);
-		setScrollLeft(scrollContainerRef.current.scrollLeft);
-	};
+        if (!scrollContainerRef.current) return;
+        const touch = e.touches[0];
+        setStartX(touch.pageX - scrollContainerRef.current.offsetLeft);
+        setScrollLeft(scrollContainerRef.current.scrollLeft);
+        setTouchStartTime(Date.now());
+        setTouchStartScrollLeft(scrollContainerRef.current.scrollLeft);
+    };
 
 	const handleTouchMove = () => {
 		// Let native scroll handle touch on mobile for smoother experience
 		// The scroll event will update our state
+
 	};
 
 	const handleTouchEnd = () => {
-		// Snap to nearest card after touch end with a slight delay
-		// to allow the scroll position to settle
-		setTimeout(() => {
-			if (scrollContainerRef.current) {
-				// Double-check the position after touch end for more accurate snapping
-				checkScrollPosition();
-				setTimeout(() => {
-					scrollToCard(currentIndex);
-				}, 50);
-			}
-		}, 100);
-	};
+        if (!scrollContainerRef.current) return;
+        
+        const touchEndTime = Date.now();
+        const touchDuration = touchEndTime - touchStartTime;
+        const scrollDistance = Math.abs(scrollContainerRef.current.scrollLeft - touchStartScrollLeft);
+        const velocity = scrollDistance / touchDuration;
+        
+        // If swipe was fast (velocity > 0.5), be more aggressive with snapping
+        const velocityThreshold = velocity > 0.5 ? 0.15 : 0.25;
+        
+        const currentScroll = scrollContainerRef.current.scrollLeft;
+        const adjustedScrollLeft = currentScroll + leftSpacerWidth;
+        const gap = 32;
+        const cardWithGap = cardWidth + gap;
+        
+        const rawIndex = adjustedScrollLeft / cardWithGap;
+        const lowerIndex = Math.floor(rawIndex);
+        const upperIndex = Math.ceil(rawIndex);
+        const decimal = rawIndex - lowerIndex;
+        
+        const targetIndex = decimal > velocityThreshold ? upperIndex : lowerIndex;
+        const finalIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
+        
+        setTimeout(() => {
+            scrollToCard(finalIndex);
+        }, 50);
+    };
 
 	useEffect(() => {
 		const container = scrollContainerRef.current;
@@ -228,11 +232,12 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 						ref={scrollContainerRef}
 						className="flex gap-8 overflow-x-auto pb-8 px-2 cursor-grab select-none scroll-smooth"
 						style={{ 
-							scrollbarWidth: 'none', 
-							msOverflowStyle: 'none',
-							WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
-							scrollSnapType: 'x proximity' // Enable snap scrolling
-						}}
+                            scrollbarWidth: 'none', 
+                            msOverflowStyle: 'none',
+                            WebkitOverflowScrolling: 'touch',
+                            scrollSnapType: 'x mandatory', // Changed from 'x proximity' to 'x mandatory'
+                            scrollPaddingLeft: `${leftSpacerWidth}px` // Add scroll padding to account for spacer
+                        }}
 						onMouseDown={handleMouseDown}
 						onMouseMove={handleMouseMove}
 						onMouseUp={handleMouseUp}
@@ -249,8 +254,10 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 						
 						{cards.map((card) => (
 							<div
-								key={card.id}
-								className="flex-none w-[340px] md:w-[400px] xl:w-[460px] snap-center">
+                                key={card.id}
+                                className="flex-none w-[340px] md:w-[400px] xl:w-[460px] scroll-snap-align-start"
+                                style={{ scrollSnapAlign: 'start' }} // Fallback for older browsers
+                            >
 								<div className="group relative flex-none w-[340px] md:w-[400px] xl:w-[460px]">
 									<div
 										className={`relative h-[460px] md:h-[520px] xl:h-[580px] rounded-3xl ${card.bgColor} border-4 border-primary p-8 shadow-[8px_8px_0px_0px_var(--primary)] transform hover:shadow-[4px_4px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 cursor-pointer overflow-hidden`}>
