@@ -67,7 +67,7 @@ const SubmissionForm = () => {
 	];
 
 	return (
-		<div className="w-full py-24 md:py-46 xl:py-68 bg-secondary relative overflow-hidden">
+		<div className="w-full py-16 md:py-24 lg:py-46 xl:py-68 bg-secondary relative overflow-hidden">
 			{/* Background decorative elements */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				{Array.from({ length: 100 }, (_, i) => {
@@ -111,21 +111,21 @@ const SubmissionForm = () => {
 				})}
 			</div>
 
-			<div className="flex flex-col justify-end p-4 md:p-8 xl:px-12 relative z-10">
+			<div className="flex flex-col justify-end p-4 md:p-8 lg:p-12 xl:px-16 relative z-10">
 				{/* Main CTA Container */}
-				<div className="w-full max-w-4xl mx-auto mb-8">
-					<div className="bg-background rounded-3xl border-2 border-primary shadow-[12px_12px_0px_0px_var(--primary)] p-8 xl:p-12 relative">
+				<div className="w-full max-w-4xl mx-auto mb-4 md:mb-8">
+					<div className="bg-background rounded-2xl md:rounded-3xl border-2 border-primary shadow-[8px_8px_0px_0px_var(--primary)] md:shadow-[12px_12px_0px_0px_var(--primary)] p-6 md:p-8 xl:p-12 relative">
 						
 						{/* Exclusive badge */}
-						<div className="absolute -top-4 -right-4 bg-primary text-secondary px-6 py-3 rounded-full border-2 border-foreground shadow-[4px_4px_0px_0px_var(--foreground)] transform rotate-12">
-							<div className="flex items-center gap-2">
-								<Users className="size-4" strokeWidth={3} />
-								<span className="font-bold text-sm">EXCLUSIVE</span>
+						<div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-primary text-secondary px-4 py-2 md:px-6 md:py-3 rounded-full border-2 border-foreground shadow-[3px_3px_0px_0px_var(--foreground)] md:shadow-[4px_4px_0px_0px_var(--foreground)] transform rotate-12">
+							<div className="flex items-center gap-1.5 md:gap-2">
+								<Users className="size-3 md:size-4" strokeWidth={3} />
+								<span className="font-bold text-xs md:text-sm">EXCLUSIVE</span>
 							</div>
 						</div>
 
 						{/* Inner decorative elements */}
-						<div className="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl">
+						<div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl md:rounded-3xl">
 							{Array.from({ length: 24 }, (_, i) => {
 								const seed = i * 19;
 								const topPercent = 15 + ((seed * 23) % 70);
@@ -150,40 +150,40 @@ const SubmissionForm = () => {
 							})}
 						</div>
 
-						<div className="flex flex-col gap-8 md:gap-12 relative z-10">
+						<div className="flex flex-col gap-6 md:gap-8 lg:gap-12 relative z-10">
 							{/* Header */}
 							<div className="text-center">
-								<h3 id='form' className="text-[40px] md:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-6">
+								<h3 className="text-[28px] sm:text-[36px] md:text-[48px] lg:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
 									Ready to{' '}
 									<span className="relative">
 										revolutionise
-										<div className="absolute -bottom-2 left-0 w-full h-4 bg-accent rounded-full" />
+										<div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-2 md:h-4 bg-accent rounded-full" />
 									</span>
 									<span className="block">the way you eat?</span>
 								</h3>
-								<p className="text-lg md:text-xl text-gray-600 mb-8 font-medium leading-relaxed">
+								<p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
 									Join our waitlist to be first in line when we launch. No spam, just updates on our progress and early access.
 								</p>
 								
-								<div className="bg-accent/50 border-2 border-primary rounded-2xl px-6 py-4 mb-8 inline-block shadow-[4px_4px_0px_0px_var(--primary)]">
-									<div className="flex items-center gap-3">
+								<div className="bg-accent/50 border-2 border-primary rounded-xl md:rounded-2xl px-4 py-3 md:px-6 md:py-4 mb-6 md:mb-8 inline-block shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)]">
+									<div className="flex items-center gap-2 md:gap-3">
 										<div className="flex -space-x-2">
 											{Array.from({ length: 3 }, (_, i) => (
-												<div key={i} className="w-8 h-8 bg-primary rounded-full border-2 border-background flex items-center justify-center">
-													<span className="text-secondary text-xs font-bold">{i + 1}</span>
+												<div key={i} className="w-6 h-6 md:w-8 md:h-8 bg-primary rounded-full border-2 border-background flex items-center justify-center">
+													<span className="text-secondary text-[10px] md:text-xs font-bold">{i + 1}</span>
 												</div>
 											))}
-											<div className="w-8 h-8 bg-secondary border-2 border-primary rounded-full flex items-center justify-center">
-												<span className="text-primary text-xs font-bold">+</span>
+											<div className="w-6 h-6 md:w-8 md:h-8 bg-secondary border-2 border-primary rounded-full flex items-center justify-center">
+												<span className="text-primary text-[10px] md:text-xs font-bold">+</span>
 											</div>
 										</div>
-										<span className="text-foreground font-bold text-sm">Join 3+ early adopters</span>
+										<span className="text-foreground font-bold text-xs md:text-sm">Join 3+ early adopters</span>
 									</div>
 								</div>
 							</div>
 
 							{/* Form */}
-							<div className="w-full flex flex-col gap-6">
+							<div className="w-full flex flex-col gap-4 md:gap-6">
 								{formFields.map((field) => {
 									const IconComponent = field.icon;
 									const isFocused = focusedField === field.name;
@@ -191,18 +191,18 @@ const SubmissionForm = () => {
 									
 									return (
 										<div key={field.name} className="relative group">
-											<div className={`relative bg-background border-3 border-primary rounded-2xl transition-all duration-300 ${
+											<div className={`relative bg-background border-2 md:border-3 border-primary rounded-xl md:rounded-2xl transition-all duration-300 ${
 												isFocused 
 													? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1] translate-y-[2px]' 
-													: 'shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
+													: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
 											}`}>
-												<div className="flex items-center gap-4 p-4">
-													<div className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
+												<div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
+													<div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
 														isFocused || hasValue 
 															? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]' 
 															: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
 													}`}>
-														<IconComponent className={`size-6 ${isFocused || hasValue ? 'text-primary' : 'text-primary'}`} strokeWidth={2.5} />
+														<IconComponent className={`size-5 md:size-6 ${isFocused || hasValue ? 'text-primary' : 'text-primary'}`} strokeWidth={2.5} />
 													</div>
 													<input
 														name={field.name}
@@ -215,7 +215,7 @@ const SubmissionForm = () => {
 														onChange={handleInputChange}
 														onFocus={() => setFocusedField(field.name)}
 														onBlur={() => setFocusedField(null)}
-														className="flex-1 text-lg md:text-xl font-medium bg-transparent border-none outline-none placeholder-primary/50 !text-primary"
+														className="flex-1 text-base md:text-lg lg:text-xl font-medium bg-transparent border-none outline-none placeholder-primary/50 !text-primary"
 													/>
 												</div>
 											</div>
@@ -224,14 +224,14 @@ const SubmissionForm = () => {
 								})}
 
 								{/* Submit Button */}
-								<div className="flex justify-center mt-4">
+								<div className="flex justify-center mt-2 md:mt-4">
 									<button
 										type="submit"
 										onClick={handleSubmit}
-										className="group bg-secondary hover:bg-secondary/90 border-4 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-lg py-4 px-8 md:py-5 md:px-12 rounded-2xl transition-all duration-300 shadow-[8px_8px_0px_0px_var(--foreground)] hover:shadow-[4px_4px_0px_0px_var(--foreground)] hover:translate-x-[4px] hover:translate-y-[4px] relative overflow-hidden cursor-pointer">
-										<span className="relative z-10 flex items-center gap-3">
+										className="group bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 shadow-[6px_6px_0px_0px_var(--foreground)] md:shadow-[8px_8px_0px_0px_var(--foreground)] hover:shadow-[3px_3px_0px_0px_var(--foreground)] md:hover:shadow-[4px_4px_0px_0px_var(--foreground)] hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer">
+										<span className="relative z-10 flex items-center gap-2 md:gap-3">
 											Join the waitlist
-											<ArrowRight className="size-6 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={3} />
+											<ArrowRight className="size-4 md:size-5 lg:size-6 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={3} />
 										</span>
 										
 										{/* Button decorative elements */}
@@ -254,7 +254,7 @@ const SubmissionForm = () => {
 								</div>
 
 								{/* Benefits below form */}
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+								<div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
 									{[
 										{ icon: Zap, text: 'Early access perks' },
 										{ icon: Mail, text: 'No spam, ever' },
@@ -262,9 +262,9 @@ const SubmissionForm = () => {
 									].map((benefit, index) => {
 										const BenefitIcon = benefit.icon;
 										return (
-											<div key={index} className="bg-accent/40 border-2 border-primary rounded-xl p-3 flex justify-center items-center gap-3 shadow-[2px_2px_0px_0px_var(--primary)]">
-												<BenefitIcon className="size-5 text-primary" strokeWidth={2.5} />
-												<span className="text-sm lg:text-md font-bold text-primary/80">{benefit.text}</span>
+											<div key={index} className="bg-accent/40 border-2 border-primary rounded-lg md:rounded-xl p-2.5 md:p-3 flex justify-center items-center gap-2 md:gap-3 shadow-[2px_2px_0px_0px_var(--primary)]">
+												<BenefitIcon className="size-4 md:size-5 text-primary flex-shrink-0" strokeWidth={2.5} />
+												<span className="text-xs md:text-sm lg:text-md font-bold text-primary/80">{benefit.text}</span>
 											</div>
 										);
 									})}
@@ -276,8 +276,8 @@ const SubmissionForm = () => {
 
 				{/* Footer */}
 				<div className="text-center">
-					<div className="bg-background/80 border border-primary/30 rounded-full px-4 py-2 inline-block backdrop-blur-sm">
-						<span className="text-xs text-gray-500">© 2025 mealmate</span>
+					<div className="bg-background/80 border border-primary/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 inline-block backdrop-blur-sm">
+						<span className="text-[10px] md:text-xs text-gray-500">© 2025 mealmate</span>
 					</div>
 				</div>
 			</div>
