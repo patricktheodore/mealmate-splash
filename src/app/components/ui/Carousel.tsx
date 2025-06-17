@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CarouselCard {
@@ -200,11 +201,15 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 											{/* Large Centered Image - Increased size and weight */}
 											{card.image && (
 												<div className="w-full flex-1 flex items-center justify-center relative min-h-0">
-													<img
-														src={card.image}
-														alt="Card Illustration"
-														className="max-w-[95%] w-full h-auto max-h-full object-contain"
-													/>
+													<div className="relative w-full h-full max-w-[95%] max-h-full">
+														<Image
+															src={card.image}
+															alt="Card Illustration"
+															fill
+															className="object-contain"
+															sizes="(max-width: 768px) 95vw, (max-width: 1200px) 400px, 460px"
+														/>
+													</div>
 												</div>
 											)}
 										</div>

@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import EnhancedCarousel from './components/sections/EnhanceCarousel';
+// import EnhancedCarousel from './components/sections/EnhanceCarousel';
+// import HowItWorksSection from './components/sections/HowItWorks';
 import ProblemSection from './components/sections/ProblemSection';
-import HowItWorksSection from './components/sections/HowItWorks';
 import PriceComparisonSection from './components/sections/PriceComparison';
 import SubmissionForm from './components/sections/SubmissionForm';
 import SolutionSection from './components/sections/SolutionSection';
