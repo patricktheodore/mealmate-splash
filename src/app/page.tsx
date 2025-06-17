@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 // import EnhancedCarousel from './components/sections/EnhanceCarousel';
 // import HowItWorksSection from './components/sections/HowItWorks';
 import ProblemSection from './components/sections/ProblemSection';
-import PriceComparisonSection from './components/sections/PriceComparison';
+// import PriceComparisonSection from './components/sections/PriceComparison';
 import SubmissionForm from './components/sections/SubmissionForm';
 import SolutionSection from './components/sections/SolutionSection';
 
@@ -135,7 +135,7 @@ export default function Home() {
 				<SolutionSection />
 				{/* <EnhancedCarousel /> */}
 				{/* <HowItWorksSection /> */}
-				<PriceComparisonSection />
+				{/* <PriceComparisonSection /> */}
 				<SubmissionForm />
 			</div>
 		</div>
