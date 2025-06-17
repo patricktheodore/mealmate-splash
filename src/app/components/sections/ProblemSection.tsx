@@ -38,7 +38,7 @@ const ProblemSection = () => {
 	];
 
 	return (
-		<section id="problem">
+<section id="problem">
             <ReusableCarousel 
                 cards={problems}
                 title="Here&apos;s why they don&apos;t work."
