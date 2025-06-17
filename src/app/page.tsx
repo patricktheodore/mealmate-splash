@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import EnhancedCarousel from './components/sections/EnhanceCarousel';
+// import EnhancedCarousel from './components/sections/EnhanceCarousel';
+// import HowItWorksSection from './components/sections/HowItWorks';
 import ProblemSection from './components/sections/ProblemSection';
-import HowItWorksSection from './components/sections/HowItWorks';
 import PriceComparisonSection from './components/sections/PriceComparison';
 import SubmissionForm from './components/sections/SubmissionForm';
+import SolutionSection from './components/sections/SolutionSection';
 
 export default function Home() {
 	const scrollToForm = () => {
@@ -83,8 +84,9 @@ export default function Home() {
 			</div>
 
 			<ProblemSection />
-            <EnhancedCarousel />
-			<HowItWorksSection />
+            <SolutionSection />
+            {/* <EnhancedCarousel /> */}
+			{/* <HowItWorksSection /> */}
             <PriceComparisonSection />
             <SubmissionForm />
 		</div>
