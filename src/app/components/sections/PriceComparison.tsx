@@ -72,7 +72,7 @@ const PriceComparisonSection = () => {
 	];
 
 	return (
-		<div className="w-full py-24 md:py-46 xl:py-68 px-4 md:px-8 xl:px-12 relative overflow-hidden">
+		<div className="w-full py-24 md:py-46 xl:py-68 px-8 md:px-12 xl:px-16 relative overflow-hidden">
 			{/* Background decorative elements */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				{Array.from({ length: 25 }, (_, i) => {
