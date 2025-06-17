@@ -70,14 +70,28 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
             setCanScrollLeft(scrollLeft > 10);
             setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
 
-            // Update current index with lower threshold
+            // Simple threshold calculation
             const adjustedScrollLeft = scrollLeft + leftSpacerWidth;
             const gap = 32;
             const cardWithGap = cardWidth + gap;
             
-            // Use 0.3 threshold instead of 0.5 (Math.round)
-            // This means you only need to scroll 30% of the card to snap to the next one
-            const newIndex = Math.floor((adjustedScrollLeft + cardWithGap * 0.3) / cardWithGap);
+            // Calculate position and use 30% threshold
+            const exactIndex = adjustedScrollLeft / cardWithGap;
+            const decimal = exactIndex % 1;
+            
+            let newIndex;
+            if (decimal < 0.3) {
+                // Less than 30% into the card - snap to this card
+                newIndex = Math.floor(exactIndex);
+            } else if (decimal > 0.7) {
+                // More than 70% into the card - snap to next card
+                newIndex = Math.ceil(exactIndex);
+            } else {
+                // In the middle zone (30%-70%) - maintain current position
+                // This creates a "dead zone" that prevents jittery behavior
+                return; // Don't update the index
+            }
+            
             setCurrentIndex(Math.max(0, Math.min(cards.length - 1, newIndex)));
         }
     };
@@ -154,13 +168,13 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 
 	};
 
-	const handleTouchEnd = () => {
+    const handleTouchEnd = () => {
         if (!scrollContainerRef.current) return;
         
         const touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
-        const scrollDistance = Math.abs(scrollContainerRef.current.scrollLeft - touchStartScrollLeft);
-        const velocity = scrollDistance / touchDuration;
+        const scrollDelta = scrollContainerRef.current.scrollLeft - touchStartScrollLeft;
+        const velocity = Math.abs(scrollDelta) / touchDuration;
         
         // If swipe was fast (velocity > 0.5), be more aggressive with snapping
         const velocityThreshold = velocity > 0.5 ? 0.15 : 0.25;
@@ -171,11 +185,20 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
         const cardWithGap = cardWidth + gap;
         
         const rawIndex = adjustedScrollLeft / cardWithGap;
-        const lowerIndex = Math.floor(rawIndex);
-        const upperIndex = Math.ceil(rawIndex);
-        const decimal = rawIndex - lowerIndex;
         
-        const targetIndex = decimal > velocityThreshold ? upperIndex : lowerIndex;
+        // Determine direction and apply appropriate threshold
+        let targetIndex;
+        if (scrollDelta > 0) {
+            // Scrolled right (forward)
+            targetIndex = rawIndex % 1 > velocityThreshold ? Math.ceil(rawIndex) : Math.floor(rawIndex);
+        } else if (scrollDelta < 0) {
+            // Scrolled left (backward)
+            targetIndex = rawIndex % 1 < (1 - velocityThreshold) ? Math.floor(rawIndex) : Math.ceil(rawIndex);
+        } else {
+            // No movement
+            targetIndex = Math.round(rawIndex);
+        }
+        
         const finalIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
         
         setTimeout(() => {
