@@ -80,10 +80,10 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
             const decimal = exactIndex % 1;
             
             let newIndex;
-            if (decimal < 0.3) {
+            if (decimal < 0.1) {
                 // Less than 30% into the card - snap to this card
                 newIndex = Math.floor(exactIndex);
-            } else if (decimal > 0.7) {
+            } else if (decimal > 0.9) {
                 // More than 70% into the card - snap to next card
                 newIndex = Math.ceil(exactIndex);
             } else {
@@ -98,9 +98,8 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 
 	const scrollToCard = (index: number) => {
 		if (scrollContainerRef.current) {
-			const gap = 32; // gap between cards
+			const gap = 32;
 			const cardWithGap = cardWidth + gap;
-			// Calculate target scroll position accounting for left spacer
 			const targetScroll = (index * cardWithGap) - leftSpacerWidth;
 			
 			scrollContainerRef.current.scrollTo({
@@ -171,38 +170,23 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
     const handleTouchEnd = () => {
         if (!scrollContainerRef.current) return;
         
-        const touchEndTime = Date.now();
-        const touchDuration = touchEndTime - touchStartTime;
-        const scrollDelta = scrollContainerRef.current.scrollLeft - touchStartScrollLeft;
-        const velocity = Math.abs(scrollDelta) / touchDuration;
-        
-        // If swipe was fast (velocity > 0.5), be more aggressive with snapping
-        const velocityThreshold = velocity > 0.5 ? 0.15 : 0.25;
-        
         const currentScroll = scrollContainerRef.current.scrollLeft;
-        const adjustedScrollLeft = currentScroll + leftSpacerWidth;
-        const gap = 32;
-        const cardWithGap = cardWidth + gap;
+        const scrollDelta = currentScroll - touchStartScrollLeft;
+        const minSwipeDistance = 20; // Minimum distance to register as a swipe
         
-        const rawIndex = adjustedScrollLeft / cardWithGap;
+        let targetIndex = currentIndex;
         
-        // Determine direction and apply appropriate threshold
-        let targetIndex;
-        if (scrollDelta > 0) {
-            // Scrolled right (forward)
-            targetIndex = rawIndex % 1 > velocityThreshold ? Math.ceil(rawIndex) : Math.floor(rawIndex);
-        } else if (scrollDelta < 0) {
-            // Scrolled left (backward)
-            targetIndex = rawIndex % 1 < (1 - velocityThreshold) ? Math.floor(rawIndex) : Math.ceil(rawIndex);
-        } else {
-            // No movement
-            targetIndex = Math.round(rawIndex);
+        if (scrollDelta > minSwipeDistance) {
+            // Scrolled right (forward) - go to next card
+            targetIndex = Math.min(cards.length - 1, currentIndex + 1);
+        } else if (scrollDelta < -minSwipeDistance) {
+            // Scrolled left (backward) - go to previous card
+            targetIndex = Math.max(0, currentIndex - 1);
         }
-        
-        const finalIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
+        // If scrollDelta is within minSwipeDistance, stay on current card
         
         setTimeout(() => {
-            scrollToCard(finalIndex);
+            scrollToCard(targetIndex);
         }, 50);
     };
 
@@ -230,7 +214,7 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
 					</h2>
 				</div>
 
-				<div className="w-full px-4 md:px-12 xl:px-24 justify-end items-end flex gap-2 mb-4">
+				<div className="w-full px-8 md:px-12 xl:px-24 justify-end items-end flex gap-2 mb-4">
 					<button
 						onClick={scrollLeftHandler}
 						disabled={!canScrollLeft}
@@ -282,8 +266,7 @@ const ReusableCarousel: React.FC<ReusableCarouselProps> = ({
                                 style={{ scrollSnapAlign: 'start' }} // Fallback for older browsers
                             >
 								<div className="group relative flex-none w-[340px] md:w-[400px] xl:w-[460px]">
-									<div
-										className={`relative h-[460px] md:h-[520px] xl:h-[580px] rounded-3xl ${card.bgColor} border-4 border-primary p-8 shadow-[8px_8px_0px_0px_var(--primary)] transform hover:shadow-[4px_4px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 cursor-pointer overflow-hidden`}>
+									<div className={`embla__parallax__layer relative h-[460px] md:h-[520px] xl:h-[580px] rounded-3xl ${card.bgColor} border-4 border-primary p-8 shadow-[8px_8px_0px_0px_var(--primary)] transform hover:shadow-[4px_4px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300 cursor-pointer overflow-hidden`}>
 
 										{/* Card Content */}
 										<div className="relative z-20 h-full flex flex-col">
