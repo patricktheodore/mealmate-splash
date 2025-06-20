@@ -1,9 +1,14 @@
-import React from 'react';
-import { EmblaOptionsType } from 'embla-carousel';
-import { DotButton, useDotButton } from './EmblaCarouselDotButtons';
-import { PrevButton, NextButton, usePrevNextButtons } from './EmblaCarouselArrowButtons';
-import useEmblaCarousel from 'embla-carousel-react';
-
+import React from 'react'
+import { EmblaOptionsType } from 'embla-carousel'
+import { useDotButton } from './EmblaCarouselDotButtons'
+import {
+  PrevButton,
+  NextButton,
+  usePrevNextButtons
+} from './EmblaCarouselArrowButtons'
+import useEmblaCarousel from 'embla-carousel-react'
+import { Dot } from 'lucide-react';
+import Image from 'next/image';
 interface Slide {
 	id: number;
 	title: string;
@@ -28,7 +33,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
 
 	return (
 		<>
-            <div className="embla__controls">
+			<div className="w-full flex justify-end gap-2 py-4 px-8 xl:px-12">
 				<div className="embla__buttons">
 					<PrevButton
 						onClick={onPrevButtonClick}
@@ -48,15 +53,42 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
 					<div className="embla__container">
 						{slides.map((slide, index) => (
 							<div
-								className="embla__slide bg-amber-500"
+								className="embla__slide py-2"
 								key={index}>
-								<div className="embla__slide__number">{index + 1}</div>
+								<div className={`embla__slide__content border-3 border-primary p-8 md:p-10 xl:p-12 relative flex flex-col justify-between gap-4 ${slide.bgColor} shadow-[6px_6px_0px_0px_var(--primary)] transform hover:shadow-[3px_3px_0px_0px_var(--primary)] hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-300 cursor-pointer overflow-hidden`}>
+                                    <div className='flex flex-col items-start gap-2'>
+                                        <h3 className={`text-[1.5rem] md:text-[2rem] xl:text-[3rem] font-bold mb-3 ${
+                                            slide.textColor || 'text-primary'
+                                        }`}>
+                                            {slide.title}
+                                        </h3>
+                                        <p className={`text-[1rem] md:text-[1.25rem] xl:text-[1.5rem] leading-relaxed font-medium ${
+                                            slide.textColor === 'text-white' ? 'text-gray-200' : 
+                                            slide.textColor ? `${slide.textColor}/80` : 'text-primary/80'
+                                        }`}>
+                                            {slide.description}
+                                        </p>
+                                    </div>
+
+                                    {slide.image && (
+                                        <div className="w-full flex-1 flex items-center justify-center relative min-h-0">
+                                            <div className="relative w-full h-full max-w-[95%] max-h-full">
+                                                <Image
+                                                    src={slide.image}
+                                                    alt="Card Illustration"
+                                                    fill
+                                                    className="object-contain"
+                                                    sizes="(max-width: 768px) 95vw, (max-width: 1200px) 400px, 460px"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
 							</div>
 						))}
 					</div>
 				</div>
 			</section>
-			
 
 			{/* <div
 				className="embla__viewport"
@@ -136,7 +168,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
 				</div>
 			</div> */}
 
-			{/* <div className="w-full flex justify-center">
+			<div className="w-full flex justify-center">
 				<div className="flex justify-center mt-6">
 					<div className="bg-background border-2 border-primary rounded-full px-4 py-2 shadow-[2px_2px_0px_0px_var(--primary)]">
 						<div className="flex items-center gap-2">
@@ -155,12 +187,13 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
 							<span className="text-xs font-medium text-primary ml-2">
 								{selectedIndex + 1} of {slides.length}
 							</span>
-							<span className="text-xs text-primary/70 ml-1 hidden md:inline">• Drag to explore</span>
-							<span className="text-xs text-primary/70 ml-1 md:hidden">• Swipe to explore</span>
+                            <span><Dot /></span>
+							<span className="text-xs text-primary/70 ml-1 hidden md:inline">Click or drag to explore</span>
+							<span className="text-xs text-primary/70 ml-1 md:hidden">Swipe to explore</span>
 						</div>
 					</div>
 				</div>
-			</div> */}
+			</div>
 		</>
 	);
 };

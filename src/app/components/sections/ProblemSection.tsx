@@ -1,5 +1,4 @@
 import React from 'react';
-import ReusableCarousel from '../ui/Carousel';
 import { EmblaOptionsType } from 'embla-carousel';
 import EmblaCarousel from '../ui/Carousel/Carousel';
 
@@ -42,22 +41,19 @@ const ProblemSection = () => {
 	];
 
 	return (
-        <>
-            <section id='problems' className="w-full py-24 md:py-46 xl:py-68 overflow-hidden">
-                <div className="mx-auto">
-                    <div className="mx-auto max-w-3xl text-center mb-16">
-                        <span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
-                            We tried every meal kit out there.
-                        </span>
-                        <h2 className="text-[40px] md:text-[60px] xl:text-[80px] font-bold leading-[0.9] tracking-tighter text-gray-700 mb-8">
-                            Here&apos;s why they don&apos;t work.
-                        </h2>
-                    </div>
-
+        <section id='problems' className="w-full py-24 md:py-46 xl:py-68 overflow-hidden">
+            <div className="mx-auto">
+                <div className="mx-auto max-w-3xl text-center mb-16">
+                    <span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
+                        We tried every meal kit out there.
+                    </span>
+                    <h2 className="text-[40px] md:text-[60px] xl:text-[80px] font-bold leading-[0.9] tracking-tighter text-gray-700 mb-8">
+                        Here&apos;s why they don&apos;t work.
+                    </h2>
                 </div>
-            </section>
+            </div>
             <EmblaCarousel slides={SLIDES} options={OPTIONS} />
-        </>
+        </section>
 	);
 };
 
