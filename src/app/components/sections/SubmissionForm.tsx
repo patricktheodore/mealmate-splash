@@ -5,11 +5,8 @@ import {
 	Zap,
 	Mail,
 	User,
-	MapPin,
-	Calendar,
 	ArrowRight,
 	CheckCircle,
-	AlertCircle,
 	Loader,
 } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
@@ -17,13 +14,13 @@ import { supabase } from '@/app/lib/supabase';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface FormData {
-    name: string;
-    email: string;
+	name: string;
+	email: string;
 }
 
 interface FormErrors {
-    name?: string;
-    email?: string;
+	name?: string;
+	email?: string;
 }
 
 const SubmissionForm = () => {
@@ -31,19 +28,18 @@ const SubmissionForm = () => {
 		name: '',
 		email: '',
 	});
-    const [formErrors, setFormErrors] = useState<FormErrors>({});
+	const [formErrors, setFormErrors] = useState<FormErrors>({});
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-	const [errorMessage, setErrorMessage] = useState('');
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData({
 			...formData,
 			[name]: value,
 		});
-		
+
 		// Clear error for this field when user starts typing
 		if (formErrors[name as keyof FormData]) {
 			setFormErrors({
@@ -51,62 +47,61 @@ const SubmissionForm = () => {
 				[name]: undefined,
 			});
 		}
-		
+
 		if (submitStatus !== 'idle') {
 			setSubmitStatus('idle');
 		}
 	};
 
-    const validateForm = (): boolean => {
+	const validateForm = (): boolean => {
 		const errors: FormErrors = {};
-		
+
 		// Validate name
 		if (!formData.name.trim()) {
 			errors.name = 'Name is required';
 		} else if (formData.name.trim().length < 2) {
 			errors.name = 'Name must be at least 2 characters';
 		}
-		
+
 		// Validate email
 		if (!formData.email.trim()) {
 			errors.email = 'Email is required';
 		} else if (!emailRegex.test(formData.email.trim())) {
 			errors.email = 'Please enter a valid email address';
 		}
-		
+
 		setFormErrors(errors);
 		return Object.keys(errors).length === 0;
 	};
 
 	const saveToSupabase = async (data: typeof formData) => {
 		try {
-			const { error } = await supabase
-				.from('email_form_submissions')
-				.insert({
-                    name: data.name.trim(),
-					email: data.email.trim().toLowerCase(),
-					created_at: new Date().toISOString(),
-				});
+			const { error } = await supabase.from('email_form_submissions').insert({
+				name: data.name.trim(),
+				email: data.email.trim().toLowerCase(),
+				created_at: new Date().toISOString(),
+			});
 
 			if (error) {
 				throw error;
 			}
 
 			return { success: true };
-		} catch (error: any) {
+		} catch (error) {
 			console.error('Supabase error:', error);
-			return { success: false, error: error.message };
+			const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+			return { success: false, error: errorMessage };
 		}
 	};
 
 	const sendToMakeWebhook = async (data: typeof formData) => {
 		try {
 			const MAKE_WEBHOOK_URL = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
-			
+
 			if (!MAKE_WEBHOOK_URL) {
 				throw new Error('Webhook URL is not configured');
 			}
-			
+
 			const response = await fetch(MAKE_WEBHOOK_URL, {
 				method: 'POST',
 				headers: {
@@ -138,28 +133,27 @@ const SubmissionForm = () => {
 			} catch (parseError) {
 				// If it's not JSON and not "Accepted", but status was ok,
 				// we'll still consider it successful
-				console.log('Webhook response:', responseText);
+				console.log('Webhook response:', responseText, parseError);
 				return { success: true, result: responseText };
 			}
-		} catch (error: any) {
+		} catch (error) {
 			console.error('Make webhook error:', error);
-			return { success: false, error: error.message };
+			const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+			return { success: false, error: errorMessage };
 		}
 	};
 
-    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
 		// Validate form
 		if (!validateForm()) {
 			setSubmitStatus('error');
-			setErrorMessage('Please fix the errors below');
 			return;
 		}
 
 		setIsSubmitting(true);
 		setSubmitStatus('idle');
-		setErrorMessage('');
 
 		try {
 			const supabaseResult = await saveToSupabase(formData);
@@ -175,17 +169,15 @@ const SubmissionForm = () => {
 			}
 
 			setSubmitStatus('success');
-		} catch (error: any) {
+		} catch (error) {
 			console.error('Submission error:', error);
-			setErrorMessage(error.message || 'Something went wrong. Please try again.');
 			setSubmitStatus('error');
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
-
-		const formFields = [
+	const formFields = [
 		{
 			name: 'name',
 			type: 'text',
@@ -239,8 +231,8 @@ const SubmissionForm = () => {
 	};
 
 	const getSubmitButtonStyle = () => {
-        if (submitStatus === 'success') {
-            return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary opacity-75';
+		if (submitStatus === 'success') {
+			return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary opacity-75';
 		}
 
 		return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary shadow-[6px_6px_0px_0px_var(--primary)] md:shadow-[8px_8px_0px_0px_var(--primary)] hover:shadow-[3px_3px_0px_0px_var(--primary)] md:hover:shadow-[4px_4px_0px_0px_var(--primary)]';
@@ -336,176 +328,171 @@ const SubmissionForm = () => {
 						</div>
 
 						<div className="flex flex-col gap-6 md:gap-8 lg:gap-12 relative z-10">
-							{/* Header */}
-							<div className="text-center">
-								<h3 className="text-[28px] sm:text-[36px] md:text-[48px] lg:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
-									Ready to{' '}
-									<span className="relative">
-										revolutionise
-										<div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-2 md:h-4 bg-accent rounded-full" />
+
+							{submitStatus === 'success' && (
+								<div className="bg-secondary border-2 border-primary rounded-xl p-4 flex items-center gap-3 shadow-[3px_3px_0px_0px_var(--primary)]">
+									<CheckCircle
+										className="size-5 text-primary flex-shrink-0"
+										strokeWidth={2}
+									/>
+									<span className="text-primary font-medium">
+										Welcome to the waitlist! You&apos;ll be the first to know when we launch.
 									</span>
-									<span className="block">the way you eat?</span>
-								</h3>
-								<p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
-									Join our waitlist to be first in line when we launch. No spam, just updates on our
-									progress and early access.
-								</p>
-
-								<div className="bg-accent/50 border-2 border-primary rounded-xl md:rounded-2xl px-4 py-3 md:px-6 md:py-4 mb-6 md:mb-8 inline-block shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)]">
-									<div className="flex items-center gap-2 md:gap-3">
-										<div className="flex -space-x-2">
-											{Array.from({ length: 3 }, (_, i) => (
-												<div
-													key={i}
-													className="w-6 h-6 md:w-8 md:h-8 bg-primary rounded-full border-2 border-background flex items-center justify-center">
-													<span className="text-secondary text-[10px] md:text-xs font-bold">
-														{i + 1}
-													</span>
-												</div>
-											))}
-											<div className="w-6 h-6 md:w-8 md:h-8 bg-secondary border-2 border-primary rounded-full flex items-center justify-center">
-												<span className="text-primary text-[10px] md:text-xs font-bold">+</span>
-											</div>
-										</div>
-										<span className="text-foreground font-bold text-xs md:text-sm">
-											Join 3+ early adopters
-										</span>
-									</div>
 								</div>
-							</div>
+							)}
 
-							{/* Form */}
-							<div className="w-full flex flex-col gap-4 md:gap-6">
-								{/* Error Message */}
-								{submitStatus === 'error' && errorMessage && (
-									<div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 flex items-center gap-3">
-										<AlertCircle
-											className="size-5 text-red-500 flex-shrink-0"
-											strokeWidth={2}
-										/>
-										<span className="text-red-700 font-medium">{errorMessage}</span>
-									</div>
-								)}
+							{submitStatus !== 'success' && (
+								<>
+									{/* Header */}
+									<div className="text-center">
+										<h3 className="text-[28px] sm:text-[36px] md:text-[48px] lg:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
+											Ready to{' '}
+											<span className="relative">
+												revolutionise
+												<div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-2 md:h-4 bg-accent rounded-full" />
+											</span>
+											<span className="block">the way you eat?</span>
+										</h3>
+										<p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
+											Join our waitlist to be first in line when we launch. No spam, just updates
+											on our progress and early access.
+										</p>
 
-								{/* Success Message */}
-								{submitStatus === 'success' && (
-									<div className="bg-green-50 border-2 border-green-300 rounded-xl p-4 flex items-center gap-3">
-										<CheckCircle
-											className="size-5 text-green-500 flex-shrink-0"
-											strokeWidth={2}
-										/>
-										<span className="text-green-700 font-medium">
-											Welcome to the waitlist! You'll be the first to know when we launch.
-										</span>
-									</div>
-								)}
-
-								{formFields.map((field) => {
-									const IconComponent = field.icon;
-									const isFocused = focusedField === field.name;
-									const hasValue = formData[field.name as keyof FormData];
-									const hasError = formErrors[field.name as keyof FormData];
-
-									return (
-										<div
-											key={field.name}
-											className="relative group">
-											<div
-												className={`relative bg-background border-2 md:border-3 border-primary rounded-xl md:rounded-2xl transition-all duration-300 ${
-													hasError && 'bg-accent/50'
-												} ${
-													isFocused
-														? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1px] translate-y-[2px] bg-secondary/50'
-														: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
-												}`}>
-												<div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
-													<div
-														className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
-																isFocused || hasValue
-																? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
-																: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
-														}`}>
-														<IconComponent
-															className={`size-5 md:size-6 ${
-																isFocused || hasValue ? 'text-primary' : 'text-primary'
-															}`}
-															strokeWidth={2.5}
-														/>
+										<div className="bg-accent/50 border-2 border-primary rounded-xl md:rounded-2xl px-4 py-3 md:px-6 md:py-4 mb-6 md:mb-8 inline-block shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)]">
+											<div className="flex items-center gap-2 md:gap-3">
+												<div className="flex -space-x-2">
+													{Array.from({ length: 3 }, (_, i) => (
+														<div
+															key={i}
+															className="w-6 h-6 md:w-8 md:h-8 bg-primary rounded-full border-2 border-background flex items-center justify-center">
+															<span className="text-secondary text-[10px] md:text-xs font-bold">
+																{i + 1}
+															</span>
+														</div>
+													))}
+													<div className="w-6 h-6 md:w-8 md:h-8 bg-secondary border-2 border-primary rounded-full flex items-center justify-center">
+														<span className="text-primary text-[10px] md:text-xs font-bold">
+															+
+														</span>
 													</div>
-													<input
-														name={field.name}
-														type={field.type}
-														placeholder={field.placeholder}
-														required={field.required}
-														value={formData[field.name as keyof FormData]}
-														onChange={handleInputChange}
-														onFocus={() => setFocusedField(field.name)}
-														onBlur={() => setFocusedField(null)}
-														disabled={isSubmitting || submitStatus === 'success'}
-														className="flex-1 text-base md:text-lg lg:text-xl font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
-													/>
 												</div>
-											</div>
-											{hasError && (
-												<p className="text-red-500 text-xs md:text-sm mt-2 ml-4 font-medium">
-													{hasError}
-												</p>
-											)}
-										</div>
-									);
-								})}
-
-								{/* Submit Button */}
-								<div className="flex justify-center mt-2 md:mt-4">
-									<button
-										onClick={handleSubmit}
-										disabled={isSubmitting || submitStatus === 'success'}
-										className={`group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 ${getSubmitButtonStyle()}`}>
-										{getSubmitButtonContent()}
-
-										{/* Button decorative elements */}
-										<div className="absolute inset-0 overflow-hidden">
-											{Array.from({ length: 3 }, (_, i) => (
-												<div
-													key={i}
-													className="absolute bg-primary/40 rounded-full animate-pulse"
-													style={{
-														top: `${20 + i * 30}%`,
-														left: `${10 + i * 25}%`,
-														width: `${8 + i * 4}px`,
-														height: `${8 + i * 4}px`,
-														animationDelay: `${i * 0.3}s`,
-													}}
-												/>
-											))}
-										</div>
-									</button>
-								</div>
-
-								{/* Benefits below form */}
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
-									{[
-										{ icon: Zap, text: 'Early access perks' },
-										{ icon: Mail, text: 'No spam, ever' },
-										{ icon: Sparkles, text: 'Exclusive updates' },
-									].map((benefit, index) => {
-										const BenefitIcon = benefit.icon;
-										return (
-											<div
-												key={index}
-												className="bg-accent/40 border-2 border-primary rounded-lg md:rounded-xl p-2.5 md:p-3 flex justify-center items-center gap-2 md:gap-3 shadow-[2px_2px_0px_0px_var(--primary)]">
-												<BenefitIcon
-													className="size-4 md:size-5 text-primary flex-shrink-0"
-													strokeWidth={2.5}
-												/>
-												<span className="text-xs md:text-sm lg:text-md font-bold text-primary/80">
-													{benefit.text}
+												<span className="text-foreground font-bold text-xs md:text-sm">
+													Join 3+ early adopters
 												</span>
 											</div>
-										);
-									})}
-								</div>
-							</div>
+										</div>
+									</div>
+
+									{/* Form */}
+									<div className="w-full flex flex-col gap-4 md:gap-6">
+										{formFields.map((field) => {
+											const IconComponent = field.icon;
+											const isFocused = focusedField === field.name;
+											const hasValue = formData[field.name as keyof FormData];
+											const hasError = formErrors[field.name as keyof FormData];
+
+											return (
+												<div
+													key={field.name}
+													className="relative group">
+													<div
+														className={`relative border-2 md:border-3 border-primary rounded-xl md:rounded-2xl transition-all duration-300 ${
+															isFocused && !hasError
+																? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1px] translate-y-[2px] bg-secondary/50'
+																: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
+														} ${hasError ? 'bg-accent/25' : 'bg-inherit'}`}>
+														<div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
+															<div
+																className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
+																	isFocused || hasValue
+																		? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
+																		: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
+																}`}>
+																<IconComponent
+																	className={`size-5 md:size-6 ${
+																		isFocused || hasValue
+																			? 'text-primary'
+																			: 'text-primary'
+																	}`}
+																	strokeWidth={2.5}
+																/>
+															</div>
+															<input
+																name={field.name}
+																type={field.type}
+																placeholder={field.placeholder}
+																required={field.required}
+																value={formData[field.name as keyof FormData]}
+																onChange={handleInputChange}
+																onFocus={() => setFocusedField(field.name)}
+																onBlur={() => setFocusedField(null)}
+																disabled={isSubmitting}
+																className="flex-1 text-base md:text-lg lg:text-xl font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
+															/>
+														</div>
+													</div>
+													{hasError && (
+														<p className="text-red-500 text-xs md:text-sm mt-2 ml-4 font-medium">
+															{hasError}
+														</p>
+													)}
+												</div>
+											);
+										})}
+
+										{/* Submit Button */}
+										<div className="flex justify-center mt-2 md:mt-4">
+											<button
+												onClick={handleSubmit}
+												disabled={isSubmitting}
+												className={`group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 ${getSubmitButtonStyle()}`}>
+												{getSubmitButtonContent()}
+
+												{/* Button decorative elements */}
+												<div className="absolute inset-0 overflow-hidden">
+													{Array.from({ length: 3 }, (_, i) => (
+														<div
+															key={i}
+															className="absolute bg-primary/40 rounded-full animate-pulse"
+															style={{
+																top: `${20 + i * 30}%`,
+																left: `${10 + i * 25}%`,
+																width: `${8 + i * 4}px`,
+																height: `${8 + i * 4}px`,
+																animationDelay: `${i * 0.3}s`,
+															}}
+														/>
+													))}
+												</div>
+											</button>
+										</div>
+
+										{/* Benefits below form */}
+										<div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
+											{[
+												{ icon: Zap, text: 'Early access perks' },
+												{ icon: Mail, text: 'No spam, ever' },
+												{ icon: Sparkles, text: 'Exclusive updates' },
+											].map((benefit, index) => {
+												const BenefitIcon = benefit.icon;
+												return (
+													<div
+														key={index}
+														className="bg-accent/40 border-2 border-primary rounded-lg md:rounded-xl p-2.5 md:p-3 flex justify-center items-center gap-2 md:gap-3 shadow-[2px_2px_0px_0px_var(--primary)]">
+														<BenefitIcon
+															className="size-4 md:size-5 text-primary flex-shrink-0"
+															strokeWidth={2.5}
+														/>
+														<span className="text-xs md:text-sm lg:text-md font-bold text-primary/80">
+															{benefit.text}
+														</span>
+													</div>
+												);
+											})}
+										</div>
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
