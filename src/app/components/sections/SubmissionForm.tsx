@@ -144,6 +144,17 @@ const SubmissionForm = () => {
 	};
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        // MOCK
+        // set submitStatus('success');
+        setIsSubmitting(true);
+
+        // wait 3 seconds to simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        setSubmitStatus('success');
+        return;
+
+
 		e.preventDefault();
 
 		// Validate form
@@ -239,7 +250,7 @@ const SubmissionForm = () => {
 	};
 
 	return (
-		<div className="w-full py-16 md:py-24 lg:py-46 xl:py-68 bg-secondary relative overflow-hidden">
+		<div className="w-full py-16 md:py-24 lg:py-46 xl:py-68 min-h-screen bg-secondary relative overflow-hidden">
 			{/* Background decorative elements */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				{Array.from({ length: 100 }, (_, i) => {
@@ -345,7 +356,7 @@ const SubmissionForm = () => {
 								<>
 									{/* Header */}
 									<div className="text-center">
-										<h3 className="text-[28px] sm:text-[36px] md:text-[48px] lg:text-[60px] xl:text-[80px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
+										<h3 className="text-[20px] sm:text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
 											Ready to{' '}
 											<span className="relative">
 												revolutionise
@@ -353,7 +364,7 @@ const SubmissionForm = () => {
 											</span>
 											<span className="block">the way you eat?</span>
 										</h3>
-										<p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
+										<p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
 											Join our waitlist to be first in line when we launch. No spam, just updates
 											on our progress and early access.
 										</p>
@@ -401,15 +412,15 @@ const SubmissionForm = () => {
 																? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1px] translate-y-[2px] bg-secondary/50'
 																: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
 														} ${hasError ? 'bg-accent/25' : 'bg-inherit'}`}>
-														<div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
+														<div className="flex items-center gap-3 md:gap-4 p-3">
 															<div
-																className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
+																className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
 																	isFocused || hasValue
 																		? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
 																		: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
 																}`}>
 																<IconComponent
-																	className={`size-5 md:size-6 ${
+																	className={`size-4 md:size-5 ${
 																		isFocused || hasValue
 																			? 'text-primary'
 																			: 'text-primary'
@@ -427,7 +438,7 @@ const SubmissionForm = () => {
 																onFocus={() => setFocusedField(field.name)}
 																onBlur={() => setFocusedField(null)}
 																disabled={isSubmitting}
-																className="flex-1 text-base md:text-lg lg:text-xl font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
+																className="flex-1 text-base md:text-lg font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
 															/>
 														</div>
 													</div>
