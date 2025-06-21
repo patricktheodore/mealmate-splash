@@ -14,38 +14,77 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface FormData {
+    name: string;
+    email: string;
+}
+
+interface FormErrors {
+    name?: string;
+    email?: string;
+}
+
 const SubmissionForm = () => {
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<FormData>({
 		name: '',
 		email: '',
-		location: '',
-		age: '',
 	});
-
+    const [formErrors, setFormErrors] = useState<FormErrors>({});
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 	const [errorMessage, setErrorMessage] = useState('');
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
 		setFormData({
 			...formData,
-			[e.target.name]: e.target.value,
+			[name]: value,
 		});
+		
+		// Clear error for this field when user starts typing
+		if (formErrors[name as keyof FormData]) {
+			setFormErrors({
+				...formErrors,
+				[name]: undefined,
+			});
+		}
+		
 		if (submitStatus !== 'idle') {
 			setSubmitStatus('idle');
 		}
 	};
 
+    const validateForm = (): boolean => {
+		const errors: FormErrors = {};
+		
+		// Validate name
+		if (!formData.name.trim()) {
+			errors.name = 'Name is required';
+		} else if (formData.name.trim().length < 2) {
+			errors.name = 'Name must be at least 2 characters';
+		}
+		
+		// Validate email
+		if (!formData.email.trim()) {
+			errors.email = 'Email is required';
+		} else if (!emailRegex.test(formData.email.trim())) {
+			errors.email = 'Please enter a valid email address';
+		}
+		
+		setFormErrors(errors);
+		return Object.keys(errors).length === 0;
+	};
+
 	const saveToSupabase = async (data: typeof formData) => {
 		try {
 			const { error } = await supabase
-				.from('email_form_submissions') // or 'interested_users' - adjust table name
+				.from('email_form_submissions')
 				.insert({
-					name: data.name,
-					email: data.email,
-					location: data.location || null,
-					age: data.age ? parseInt(data.age) : null,
+                    name: data.name.trim(),
+					email: data.email.trim().toLowerCase(),
 					created_at: new Date().toISOString(),
 				});
 
@@ -74,10 +113,8 @@ const SubmissionForm = () => {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					email: data.email,
-					name: data.name,
-					age: data.age,
-					location: data.location,
+					email: data.email.trim().toLowerCase(),
+					name: data.name.trim(),
 				}),
 			});
 
@@ -110,13 +147,13 @@ const SubmissionForm = () => {
 		}
 	};
 
-	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
-		// Basic validation
-		if (!formData.name.trim() || !formData.email.trim()) {
-			setErrorMessage('Please fill in all required fields');
+		// Validate form
+		if (!validateForm()) {
 			setSubmitStatus('error');
+			setErrorMessage('Please fix the errors below');
 			return;
 		}
 
@@ -125,31 +162,19 @@ const SubmissionForm = () => {
 		setErrorMessage('');
 
 		try {
-			// Save to Supabase first
 			const supabaseResult = await saveToSupabase(formData);
 
 			if (!supabaseResult.success) {
 				throw new Error(`Database error: ${supabaseResult.error}`);
 			}
 
-			// Then send to Make webhook
 			const webhookResult = await sendToMakeWebhook(formData);
 
 			if (!webhookResult.success) {
-				// Data is saved to Supabase but webhook failed
 				console.warn('Webhook failed but data is saved to database');
-				// You might want to handle this differently - maybe still show success
-				// or log for manual processing
 			}
 
-			// Success!
 			setSubmitStatus('success');
-
-			// Reset form after 3 seconds
-			setTimeout(() => {
-				setFormData({ name: '', email: '', location: '', age: '' });
-				setSubmitStatus('idle');
-			}, 3000);
 		} catch (error: any) {
 			console.error('Submission error:', error);
 			setErrorMessage(error.message || 'Something went wrong. Please try again.');
@@ -159,7 +184,8 @@ const SubmissionForm = () => {
 		}
 	};
 
-	const formFields = [
+
+		const formFields = [
 		{
 			name: 'name',
 			type: 'text',
@@ -173,22 +199,6 @@ const SubmissionForm = () => {
 			placeholder: 'Your email',
 			icon: Mail,
 			required: true,
-		},
-		{
-			name: 'location',
-			type: 'text',
-			placeholder: 'Your location',
-			icon: MapPin,
-			required: false,
-		},
-		{
-			name: 'age',
-			type: 'number',
-			placeholder: 'Your age',
-			icon: Calendar,
-			required: false,
-			min: '1',
-			max: '120',
 		},
 	];
 
@@ -229,13 +239,11 @@ const SubmissionForm = () => {
 	};
 
 	const getSubmitButtonStyle = () => {
-		if (submitStatus === 'success') {
-			return 'bg-green-500 hover:bg-green-600 border-green-700 !text-white shadow-[6px_6px_0px_0px_var(--green-700)]';
+        if (submitStatus === 'success') {
+            return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary opacity-75';
 		}
-		if (submitStatus === 'error') {
-			return 'bg-red-500 hover:bg-red-600 border-red-700 !text-white shadow-[6px_6px_0px_0px_var(--red-700)]';
-		}
-		return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary shadow-[6px_6px_0px_0px_var(--foreground)] md:shadow-[8px_8px_0px_0px_var(--foreground)] hover:shadow-[3px_3px_0px_0px_var(--foreground)] md:hover:shadow-[4px_4px_0px_0px_var(--foreground)]';
+
+		return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary shadow-[6px_6px_0px_0px_var(--primary)] md:shadow-[8px_8px_0px_0px_var(--primary)] hover:shadow-[3px_3px_0px_0px_var(--primary)] md:hover:shadow-[4px_4px_0px_0px_var(--primary)]';
 	};
 
 	return (
@@ -395,7 +403,8 @@ const SubmissionForm = () => {
 								{formFields.map((field) => {
 									const IconComponent = field.icon;
 									const isFocused = focusedField === field.name;
-									const hasValue = formData[field.name as keyof typeof formData];
+									const hasValue = formData[field.name as keyof FormData];
+									const hasError = formErrors[field.name as keyof FormData];
 
 									return (
 										<div
@@ -403,14 +412,16 @@ const SubmissionForm = () => {
 											className="relative group">
 											<div
 												className={`relative bg-background border-2 md:border-3 border-primary rounded-xl md:rounded-2xl transition-all duration-300 ${
+													hasError && 'bg-accent/50'
+												} ${
 													isFocused
-														? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1] translate-y-[2px]'
+														? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1px] translate-y-[2px] bg-secondary/50'
 														: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
 												}`}>
 												<div className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
 													<div
 														className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
-															isFocused || hasValue
+																isFocused || hasValue
 																? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
 																: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
 														}`}>
@@ -426,17 +437,20 @@ const SubmissionForm = () => {
 														type={field.type}
 														placeholder={field.placeholder}
 														required={field.required}
-														min={field.min}
-														max={field.max}
-														value={formData[field.name as keyof typeof formData]}
+														value={formData[field.name as keyof FormData]}
 														onChange={handleInputChange}
 														onFocus={() => setFocusedField(field.name)}
 														onBlur={() => setFocusedField(null)}
 														disabled={isSubmitting || submitStatus === 'success'}
-														className="flex-1 text-base md:text-lg lg:text-xl font-medium bg-transparent border-none outline-none placeholder-primary/50 !text-primary disabled:opacity-50"
+														className="flex-1 text-base md:text-lg lg:text-xl font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
 													/>
 												</div>
 											</div>
+											{hasError && (
+												<p className="text-red-500 text-xs md:text-sm mt-2 ml-4 font-medium">
+													{hasError}
+												</p>
+											)}
 										</div>
 									);
 								})}
