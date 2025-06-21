@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
-import {
-	Sparkles,
-	Users,
-	Zap,
-	Mail,
-	User,
-	ArrowRight,
-	CheckCircle,
-	Loader,
-} from 'lucide-react';
+import { gsap } from 'gsap';
+import React, { useState, useRef, useEffect } from 'react';
+import { Sparkles, Users, Zap, Mail, User, ArrowRight, CheckCircle, Loader, UserCheck } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
+import Image from 'next/image';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -32,6 +25,45 @@ const SubmissionForm = () => {
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+	const formContainerRef = useRef<HTMLDivElement>(null);
+	const successContainerRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (submitStatus === 'success' && formContainerRef.current && successContainerRef.current) {
+			// Animate form out
+			gsap.to(formContainerRef.current, {
+				opacity: 0,
+				scale: 0.95,
+				y: -20,
+				duration: 0.4,
+				ease: 'power2.inOut',
+				onComplete: () => {
+					if (formContainerRef.current) {
+						formContainerRef.current.style.display = 'none';
+					}
+				},
+			});
+
+			// Animate success message in
+			gsap.fromTo(
+				successContainerRef.current,
+				{
+					opacity: 0,
+					scale: 0.8,
+					y: 20,
+					display: 'block',
+				},
+				{
+					opacity: 1,
+					scale: 1,
+					y: 0,
+					duration: 0.6,
+					delay: 0.3,
+					ease: 'back.out(1.7)',
+				}
+			);
+		}
+	}, [submitStatus]);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -144,16 +176,17 @@ const SubmissionForm = () => {
 	};
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        // MOCK
-        // set submitStatus('success');
-        setIsSubmitting(true);
+		// MOCK
+		// set submitStatus('success');
+		setIsSubmitting(true);
 
-        // wait 3 seconds to simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+		// wait 3 seconds to simulate network delay
+		await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        setSubmitStatus('success');
-        return;
-
+		setSubmitStatus('success');
+		setIsSubmitting(false);
+		return;
+        // MOCK END
 
 		e.preventDefault();
 
@@ -312,198 +345,226 @@ const SubmissionForm = () => {
 							</div>
 						</div>
 
-						{/* Inner decorative elements */}
-						<div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl md:rounded-3xl">
-							{Array.from({ length: 24 }, (_, i) => {
-								const seed = i * 19;
-								const topPercent = 15 + ((seed * 23) % 70);
-								const leftPercent = 15 + ((seed * 31) % 70);
-								const size = 2 + ((seed * 7) % 3);
-								const opacity = 0.05 + ((seed * 11) % 10) / 100;
-
-								return (
-									<div
-										key={i}
-										className="absolute bg-primary/40 rounded-full animate-pulse"
-										style={{
-											top: `${topPercent}%`,
-											left: `${leftPercent}%`,
-											width: `${size * 8}px`,
-											height: `${size * 8}px`,
-											opacity: opacity,
-											animationDelay: `${i * 0.5}s`,
-										}}
-									/>
-								);
-							})}
-						</div>
-
 						<div className="flex flex-col gap-6 md:gap-8 lg:gap-12 relative z-10">
+							{/* Success Message - Hidden initially */}
+							<div
+								ref={successContainerRef}
+								className="relative"
+								style={{ display: submitStatus === 'success' ? 'block' : 'none' }}>
 
-							{submitStatus === 'success' && (
-								<div className="bg-secondary border-2 border-primary rounded-xl p-4 flex items-center gap-3 shadow-[3px_3px_0px_0px_var(--primary)]">
-									<CheckCircle
-										className="size-5 text-primary flex-shrink-0"
-										strokeWidth={2}
-									/>
-									<span className="text-primary font-medium">
-										Welcome to the waitlist! You&apos;ll be the first to know when we launch.
-									</span>
-								</div>
-							)}
-
-							{submitStatus !== 'success' && (
-								<>
-									{/* Header */}
-									<div className="text-center">
-										<h3 className="text-[20px] sm:text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
-											Ready to{' '}
-											<span className="relative">
-												revolutionise
-												<div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-2 md:h-4 bg-accent rounded-full" />
-											</span>
-											<span className="block">the way you eat?</span>
-										</h3>
-										<p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
-											Join our waitlist to be first in line when we launch. No spam, just updates
-											on our progress and early access.
-										</p>
-
-										<div className="bg-accent/50 border-2 border-primary rounded-xl md:rounded-2xl px-4 py-3 md:px-6 md:py-4 mb-6 md:mb-8 inline-block shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)]">
-											<div className="flex items-center gap-2 md:gap-3">
-												<div className="flex -space-x-2">
-													{Array.from({ length: 3 }, (_, i) => (
-														<div
-															key={i}
-															className="w-6 h-6 md:w-8 md:h-8 bg-primary rounded-full border-2 border-background flex items-center justify-center">
-															<span className="text-secondary text-[10px] md:text-xs font-bold">
-																{i + 1}
-															</span>
-														</div>
-													))}
-													<div className="w-6 h-6 md:w-8 md:h-8 bg-secondary border-2 border-primary rounded-full flex items-center justify-center">
-														<span className="text-primary text-[10px] md:text-xs font-bold">
-															+
-														</span>
-													</div>
-												</div>
-												<span className="text-foreground font-bold text-xs md:text-sm">
-													Join 3+ early adopters
-												</span>
-											</div>
+								{/* Success Content */}
+								<div className="text-center py-12 md:py-16">
+									<div className="mb-6 md:mb-8">
+										<div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 bg-secondary border-2 border-primary rounded-full shadow-[4px_4px_0px_0px_var(--primary)]">
+											<UserCheck
+												className="size-10 md:size-12 text-primary"
+												strokeWidth={3}
+											/>
 										</div>
 									</div>
 
-									{/* Form */}
-									<div className="w-full flex flex-col gap-4 md:gap-6">
-										{formFields.map((field) => {
-											const IconComponent = field.icon;
-											const isFocused = focusedField === field.name;
-											const hasValue = formData[field.name as keyof FormData];
-											const hasError = formErrors[field.name as keyof FormData];
+									<h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 md:mb-4">
+										You're on the list!
+									</h3>
 
-											return (
-												<div
-													key={field.name}
-													className="relative group">
-													<div
-														className={`relative border-2 md:border-3 border-primary rounded-xl md:rounded-2xl transition-all duration-300 ${
-															isFocused && !hasError
-																? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1px] translate-y-[2px] bg-secondary/50'
-																: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
-														} ${hasError ? 'bg-accent/25' : 'bg-inherit'}`}>
-														<div className="flex items-center gap-3 md:gap-4 p-3">
+									<p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-md mx-auto">
+										Get ready to transform your eating. We'll notify you the moment we launch.
+									</p>
+
+									<Image
+										src="/images/peaker-homie.png"
+										alt="Thank You Illustration"
+										width={100}
+										height={100}
+										className="mx-auto -mb-2"
+									/>
+
+									<div className="bg-secondary/75 border-2 border-primary rounded-xl p-4 md:p-6 max-w-sm mx-auto shadow-[3px_3px_0px_0px_var(--primary)]">
+										<div className="flex items-center gap-3 mb-3">
+											<Mail
+												className="size-5 text-primary"
+												strokeWidth={3}
+											/>
+											<span className="font-bold text-primary">What's next?</span>
+										</div>
+										<ul className="text-sm text-primary/75 space-y-2 pl-6 text-left">
+											<li className="flex items-start gap-2">
+												<span className="text-primary mt-0.5">•</span>
+												<span>Check your inbox for a welcome email</span>
+											</li>
+											<li className="flex items-start gap-2">
+												<span className="text-primary mt-0.5">•</span>
+												<span>Follow our journey as we build</span>
+											</li>
+											<li className="flex items-start gap-2">
+												<span className="text-primary mt-0.5">•</span>
+												<span>Be first to access exclusive features</span>
+											</li>
+										</ul>
+									</div>
+
+									<div className="mt-8 md:mt-10">
+										<span className="text-sm text-gray-500">
+											You've joined <strong>3</strong> other early adopters!
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div ref={formContainerRef}>
+								{submitStatus !== 'success' && (
+									<>
+										{/* Header */}
+										<div className="text-center">
+											<h3 className="text-[20px] sm:text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
+												Ready to{' '}
+												<span className="relative">
+													revolutionise
+													<div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-2 md:h-4 bg-accent rounded-full" />
+												</span>
+												<span className="block">the way you eat?</span>
+											</h3>
+											<p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
+												Join our waitlist to be first in line when we launch. No spam, just
+												updates on our progress and early access.
+											</p>
+
+											<div className="bg-accent/50 border-2 border-primary rounded-xl md:rounded-2xl px-4 py-3 md:px-6 md:py-4 mb-6 md:mb-8 inline-block shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)]">
+												<div className="flex items-center gap-2 md:gap-3">
+													<div className="flex -space-x-2">
+														{Array.from({ length: 3 }, (_, i) => (
 															<div
-																className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
-																	isFocused || hasValue
-																		? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
-																		: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
-																}`}>
-																<IconComponent
-																	className={`size-4 md:size-5 ${
-																		isFocused || hasValue
-																			? 'text-primary'
-																			: 'text-primary'
-																	}`}
-																	strokeWidth={2.5}
-																/>
+																key={i}
+																className="w-6 h-6 md:w-8 md:h-8 bg-primary rounded-full border-2 border-background flex items-center justify-center">
+																<span className="text-secondary text-[10px] md:text-xs font-bold">
+																	{i + 1}
+																</span>
 															</div>
-															<input
-																name={field.name}
-																type={field.type}
-																placeholder={field.placeholder}
-																required={field.required}
-																value={formData[field.name as keyof FormData]}
-																onChange={handleInputChange}
-																onFocus={() => setFocusedField(field.name)}
-																onBlur={() => setFocusedField(null)}
-																disabled={isSubmitting}
-																className="flex-1 text-base md:text-lg font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
-															/>
+														))}
+														<div className="w-6 h-6 md:w-8 md:h-8 bg-secondary border-2 border-primary rounded-full flex items-center justify-center">
+															<span className="text-primary text-[10px] md:text-xs font-bold">
+																+
+															</span>
 														</div>
 													</div>
-													{hasError && (
-														<p className="text-red-500 text-xs md:text-sm mt-2 ml-4 font-medium">
-															{hasError}
-														</p>
-													)}
+													<span className="text-foreground font-bold text-xs md:text-sm">
+														Join 3+ early adopters
+													</span>
 												</div>
-											);
-										})}
-
-										{/* Submit Button */}
-										<div className="flex justify-center mt-2 md:mt-4">
-											<button
-												onClick={handleSubmit}
-												disabled={isSubmitting}
-												className={`group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 ${getSubmitButtonStyle()}`}>
-												{getSubmitButtonContent()}
-
-												{/* Button decorative elements */}
-												<div className="absolute inset-0 overflow-hidden">
-													{Array.from({ length: 3 }, (_, i) => (
-														<div
-															key={i}
-															className="absolute bg-primary/40 rounded-full animate-pulse"
-															style={{
-																top: `${20 + i * 30}%`,
-																left: `${10 + i * 25}%`,
-																width: `${8 + i * 4}px`,
-																height: `${8 + i * 4}px`,
-																animationDelay: `${i * 0.3}s`,
-															}}
-														/>
-													))}
-												</div>
-											</button>
+											</div>
 										</div>
 
-										{/* Benefits below form */}
-										<div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
-											{[
-												{ icon: Zap, text: 'Early access perks' },
-												{ icon: Mail, text: 'No spam, ever' },
-												{ icon: Sparkles, text: 'Exclusive updates' },
-											].map((benefit, index) => {
-												const BenefitIcon = benefit.icon;
+										{/* Form */}
+										<div className="w-full flex flex-col gap-4 md:gap-6 px-8 md:px-12 lg:px-16">
+											{formFields.map((field) => {
+												const IconComponent = field.icon;
+												const isFocused = focusedField === field.name;
+												const hasValue = formData[field.name as keyof FormData];
+												const hasError = formErrors[field.name as keyof FormData];
+
 												return (
 													<div
-														key={index}
-														className="bg-accent/40 border-2 border-primary rounded-lg md:rounded-xl p-2.5 md:p-3 flex justify-center items-center gap-2 md:gap-3 shadow-[2px_2px_0px_0px_var(--primary)]">
-														<BenefitIcon
-															className="size-4 md:size-5 text-primary flex-shrink-0"
-															strokeWidth={2.5}
-														/>
-														<span className="text-xs md:text-sm lg:text-md font-bold text-primary/80">
-															{benefit.text}
-														</span>
+														key={field.name}
+														className="relative group">
+														<div
+															className={`relative border-2 md:border-3 border-primary rounded-xl md:rounded-2xl transition-all duration-300 ${
+																isFocused && !hasError
+																	? 'shadow-[1px_1px_0px_var(--primary)] translate-x-[1px] translate-y-[2px] bg-secondary/50'
+																	: 'shadow-[3px_3px_0px_0px_var(--primary)] md:shadow-[4px_4px_0px_0px_var(--primary)] group-hover:shadow-[2px_2px_0px_0px_var(--primary)] group-hover:translate-x-[2px] group-hover:translate-y-[2px]'
+															} ${hasError ? 'bg-accent/25' : 'bg-inherit'}`}>
+															<div className="flex items-center gap-3 md:gap-4 p-3">
+																<div
+																	className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center border-2 transition-all duration-300 ${
+																		isFocused || hasValue
+																			? 'bg-accent border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
+																			: 'bg-secondary border-primary shadow-[2px_2px_0px_0px_var(--primary)]'
+																	}`}>
+																	<IconComponent
+																		className={`size-4 md:size-5 ${
+																			isFocused || hasValue
+																				? 'text-primary'
+																				: 'text-primary'
+																		}`}
+																		strokeWidth={2.5}
+																	/>
+																</div>
+																<input
+																	name={field.name}
+																	type={field.type}
+																	placeholder={field.placeholder}
+																	required={field.required}
+																	value={formData[field.name as keyof FormData]}
+																	onChange={handleInputChange}
+																	onFocus={() => setFocusedField(field.name)}
+																	onBlur={() => setFocusedField(null)}
+																	disabled={isSubmitting}
+																	className="flex-1 text-base md:text-lg font-medium bg-transparent border-none outline-none placeholder-gray-500 text-gray-800 disabled:opacity-50"
+																/>
+															</div>
+														</div>
+														{hasError && (
+															<p className="text-red-500 text-xs md:text-sm mt-2 ml-4 font-medium">
+																{hasError}
+															</p>
+														)}
 													</div>
 												);
 											})}
+
+											{/* Submit Button */}
+											<div className="flex justify-center mt-2 md:mt-4">
+												<button
+													onClick={handleSubmit}
+													disabled={isSubmitting}
+													className={`group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 ${getSubmitButtonStyle()}`}>
+													{getSubmitButtonContent()}
+
+													{/* Button decorative elements */}
+													<div className="absolute inset-0 overflow-hidden">
+														{Array.from({ length: 3 }, (_, i) => (
+															<div
+																key={i}
+																className="absolute bg-primary/40 rounded-full animate-pulse"
+																style={{
+																	top: `${20 + i * 30}%`,
+																	left: `${10 + i * 25}%`,
+																	width: `${8 + i * 4}px`,
+																	height: `${8 + i * 4}px`,
+																	animationDelay: `${i * 0.3}s`,
+																}}
+															/>
+														))}
+													</div>
+												</button>
+											</div>
+
+											{/* Benefits below form */}
+											<div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
+												{[
+													{ icon: Zap, text: 'Early access perks' },
+													{ icon: Mail, text: 'No spam, ever' },
+													{ icon: Sparkles, text: 'Exclusive updates' },
+												].map((benefit, index) => {
+													const BenefitIcon = benefit.icon;
+													return (
+														<div
+															key={index}
+															className="bg-accent/40 border-2 border-primary rounded-lg md:rounded-xl p-2.5 md:p-3 flex justify-center items-center gap-2 md:gap-3 shadow-[2px_2px_0px_0px_var(--primary)]">
+															<BenefitIcon
+																className="size-4 md:size-5 text-primary flex-shrink-0"
+																strokeWidth={2.5}
+															/>
+															<span className="text-xs md:text-sm lg:text-md font-bold text-primary/80">
+																{benefit.text}
+															</span>
+														</div>
+													);
+												})}
+											</div>
 										</div>
-									</div>
-								</>
-							)}
+									</>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
