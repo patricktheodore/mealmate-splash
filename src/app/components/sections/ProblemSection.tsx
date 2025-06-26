@@ -41,7 +41,7 @@ const ProblemSection = () => {
 	];
 
 	return (
-        <section id='problems' className="w-full py-24 md:py-46 xl:py-68 overflow-hidden">
+        <section id='problem' className="w-full py-24 md:py-46 xl:py-68 overflow-hidden">
             <div className="mx-auto">
                 <div className="mx-auto max-w-3xl text-center mb-16">
                     <span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">

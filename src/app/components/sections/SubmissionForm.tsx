@@ -176,17 +176,16 @@ const SubmissionForm = () => {
 	};
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-		// MOCK
-		// set submitStatus('success');
-		setIsSubmitting(true);
+		// // MOCK
+		// setIsSubmitting(true);
 
-		// wait 3 seconds to simulate network delay
-		await new Promise((resolve) => setTimeout(resolve, 3000));
+		// // wait 3 seconds to simulate network delay
+		// await new Promise((resolve) => setTimeout(resolve, 3000));
 
-		setSubmitStatus('success');
-		setIsSubmitting(false);
-		return;
-        // MOCK END
+		// setSubmitStatus('success');
+		// setIsSubmitting(false);
+		// return;
+        // // MOCK END
 
 		e.preventDefault();
 
@@ -332,7 +331,7 @@ const SubmissionForm = () => {
 
 			<div className="flex flex-col justify-end p-4 md:p-8 lg:p-12 xl:px-16 relative z-10">
 				{/* Main CTA Container */}
-				<div className="w-full max-w-4xl mx-auto mb-4 md:mb-8">
+				<div id='form' className="w-full max-w-4xl mx-auto mb-4 md:mb-8">
 					<div className="bg-background rounded-2xl md:rounded-3xl border-2 border-primary shadow-[8px_8px_0px_0px_var(--primary)] md:shadow-[12px_12px_0px_0px_var(--primary)] p-6 md:p-8 xl:p-12 relative">
 						{/* Exclusive badge */}
 						<div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-primary text-secondary px-4 py-2 md:px-6 md:py-3 rounded-full border-2 border-foreground shadow-[3px_3px_0px_0px_var(--foreground)] md:shadow-[4px_4px_0px_0px_var(--foreground)] transform rotate-12">
@@ -364,11 +363,11 @@ const SubmissionForm = () => {
 									</div>
 
 									<h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 md:mb-4">
-										You're on the list!
+										You&apos;re on the list!
 									</h3>
 
 									<p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-md mx-auto">
-										Get ready to transform your eating. We'll notify you the moment we launch.
+										Get ready to transform your eating. We&apos;ll notify you the moment we launch.
 									</p>
 
 									<Image
@@ -385,9 +384,9 @@ const SubmissionForm = () => {
 												className="size-5 text-primary"
 												strokeWidth={3}
 											/>
-											<span className="font-bold text-primary">What's next?</span>
+											<span className="font-bold text-primary">What&apos;s next?</span>
 										</div>
-										<ul className="text-sm text-primary/75 space-y-2 pl-6 text-left">
+										<ul className="text-sm text-primary/90 space-y-2 pl-6 text-left">
 											<li className="flex items-start gap-2">
 												<span className="text-primary mt-0.5">•</span>
 												<span>Check your inbox for a welcome email</span>
@@ -405,7 +404,7 @@ const SubmissionForm = () => {
 
 									<div className="mt-8 md:mt-10">
 										<span className="text-sm text-gray-500">
-											You've joined <strong>3</strong> other early adopters!
+											You&apos;ve joined <strong>3</strong> other early adopters!
 										</span>
 									</div>
 								</div>
