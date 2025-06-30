@@ -55,7 +55,7 @@ export const PrevButton: React.FC<PropType> = (props) => {
 
 	return (
 		<button
-			className="embla__button bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-2 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[2px_2px_0px_0px_var(--primary)] hover:shadow-[1px_1px_0px_0px_var(--primary)] hover:translate-x-[1px] hover:translate-y-[1px]"
+			className="embla__button bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-2 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[2px_2px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px]"
 			type="button"
 			{...restProps}>
 			<ChevronLeft className="w-5 h-5" strokeWidth={3} />
@@ -68,7 +68,7 @@ export const NextButton: React.FC<PropType> = (props) => {
 
 	return (
 		<button
-			className="embla__button bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-2 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[2px_2px_0px_0px_var(--primary)] hover:shadow-[1px_1px_0px_0px_var(--primary)] hover:translate-x-[1px] hover:translate-y-[1px]"
+			className="embla__button bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base p-2 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[2px_2px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px]"
 			type="button"
 			{...restProps}>
 			<ChevronRight className="w-5 h-5" strokeWidth={3} />

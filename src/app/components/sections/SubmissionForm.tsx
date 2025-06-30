@@ -16,6 +16,101 @@ interface FormErrors {
 	email?: string;
 }
 
+// Confetti Component
+const Confetti = ({ isActive }: { isActive: boolean }) => {
+	const confettiRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (isActive && confettiRef.current) {
+			// Create confetti particles
+			const particleCount = 250; // Increased particle count
+			const colors = ['var(--primary)', 'var(--secondary)', 'var(--accent)'];
+			const particleSize = 8; // Slightly smaller particles
+			
+			// Clear any existing particles
+			confettiRef.current.innerHTML = '';
+			
+			for (let i = 0; i < particleCount; i++) {
+				const particle = document.createElement('div');
+				const color = colors[Math.floor(Math.random() * colors.length)];
+				
+				// Start from random positions across the top of the screen
+				const startX = Math.random() * window.innerWidth;
+				const startY = -50 - Math.random() * 100; // Start above the viewport
+				
+				// Create natural sway motion
+				const swayAmplitude = Math.random() * 100 + 50; // How far it sways horizontally
+				const swayDirection = Math.random() > 0.5 ? 1 : -1; // Random direction
+				const fallDistance = window.innerHeight + 200; // Fall past the bottom of the screen
+				
+				const duration = Math.random() * 2 + 3; // 3-5 seconds to fall (faster than before)
+				const delay = Math.random() * 3; // Stagger the start times
+				const rotationEnd = Math.random() * 720 - 360; // Rotation during fall
+				
+				// All particles are circles with uniform size and border
+				particle.className = 'absolute rounded-full';
+				particle.style.width = `${particleSize}px`;
+				particle.style.height = `${particleSize}px`;
+				particle.style.backgroundColor = color;
+				particle.style.border = '1px solid var(--foreground)'; // Add border for visibility
+				particle.style.left = `${startX}px`;
+				particle.style.top = `${startY}px`;
+				particle.style.opacity = '0';
+				
+				confettiRef.current.appendChild(particle);
+				
+				// Create a timeline for more complex animation
+				const tl = gsap.timeline({
+					delay: delay,
+					onComplete: () => {
+						particle.remove();
+					}
+				});
+				
+				// Fade in quickly
+				tl.to(particle, {
+					opacity: 1,
+					duration: 0.2,
+					ease: 'power1.out'
+				}, 0);
+				
+				// Main falling animation with sway
+				tl.to(particle, {
+					y: fallDistance,
+					x: swayAmplitude * swayDirection,
+					rotation: rotationEnd,
+					duration: duration,
+					ease: 'none' // Linear for the vertical fall
+				}, 0);
+				
+				// Add subtle back-and-forth sway
+				tl.to(particle, {
+					x: swayAmplitude * swayDirection * -0.5,
+					duration: duration * 0.5,
+					ease: 'sine.inOut',
+					repeat: 1,
+					yoyo: true
+				}, 0);
+				
+				// Fade out quicker - during the last 40% of the fall
+				tl.to(particle, {
+					opacity: 0,
+					duration: duration * 0.4,
+					ease: 'power1.in'
+				}, duration * 0.6);
+			}
+		}
+	}, [isActive]);
+	
+	return (
+		<div 
+			ref={confettiRef} 
+			className="fixed inset-0 pointer-events-none z-50"
+			aria-hidden="true"
+		/>
+	);
+};
+
 const SubmissionForm = () => {
 	const [formData, setFormData] = useState<FormData>({
 		name: '',
@@ -25,11 +120,20 @@ const SubmissionForm = () => {
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+	const [showConfetti, setShowConfetti] = useState(false);
 	const formContainerRef = useRef<HTMLDivElement>(null);
 	const successContainerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (submitStatus === 'success' && formContainerRef.current && successContainerRef.current) {
+			// Trigger confetti
+			setShowConfetti(true);
+			
+			// Stop confetti after 3 seconds
+			setTimeout(() => {
+				setShowConfetti(false);
+			}, 3000);
+			
 			// Animate form out
 			gsap.to(formContainerRef.current, {
 				opacity: 0,
@@ -176,16 +280,16 @@ const SubmissionForm = () => {
 	};
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-		// // MOCK
-		// setIsSubmitting(true);
+		// MOCK
+		setIsSubmitting(true);
 
-		// // wait 3 seconds to simulate network delay
-		// await new Promise((resolve) => setTimeout(resolve, 3000));
+		// wait 3 seconds to simulate network delay
+		await new Promise((resolve) => setTimeout(resolve, 3000));
 
-		// setSubmitStatus('success');
-		// setIsSubmitting(false);
-		// return;
-        // // MOCK END
+		setSubmitStatus('success');
+		setIsSubmitting(false);
+		return;
+        // MOCK END
 
 		e.preventDefault();
 
@@ -220,6 +324,11 @@ const SubmissionForm = () => {
 		}
 	};
 
+    const goToContactPage = () => {
+        window.location.href = '/contact';
+    }
+
+
 	const formFields = [
 		{
 			name: 'name',
@@ -236,6 +345,24 @@ const SubmissionForm = () => {
 			required: true,
 		},
 	];
+
+    const perks = [
+        {
+            icon: Zap,
+            title: 'Early access perks',
+            text: 'Be the first to know about our launch and get exclusive early access perks.',
+        },
+        {
+            icon: Mail,
+            title: 'No spam, ever',
+            text: 'We value your privacy. Expect only relevant updates and no spam.',
+        },
+        {
+            icon: Sparkles,
+            title: 'Exclusive updates',
+            text: 'Get behind-the-scenes insights and sneak peeks as we build something amazing.',
+        },
+    ]
 
 	const getSubmitButtonContent = () => {
 		if (isSubmitting) {
@@ -278,11 +405,14 @@ const SubmissionForm = () => {
 			return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary opacity-75';
 		}
 
-		return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary shadow-[6px_6px_0px_0px_var(--primary)] md:shadow-[8px_8px_0px_0px_var(--primary)] hover:shadow-[3px_3px_0px_0px_var(--primary)] md:hover:shadow-[4px_4px_0px_0px_var(--primary)]';
+		return 'bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)]';
 	};
 
 	return (
 		<div className="w-full py-16 md:py-24 lg:py-46 xl:py-68 min-h-screen bg-secondary relative overflow-hidden">
+			{/* Confetti Animation */}
+			<Confetti isActive={showConfetti} />
+			
 			{/* Background decorative elements */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				{Array.from({ length: 100 }, (_, i) => {
@@ -352,61 +482,81 @@ const SubmissionForm = () => {
 								style={{ display: submitStatus === 'success' ? 'block' : 'none' }}>
 
 								{/* Success Content */}
-								<div className="text-center py-12 md:py-16">
-									<div className="mb-6 md:mb-8">
-										<div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 bg-secondary border-2 border-primary rounded-full shadow-[4px_4px_0px_0px_var(--primary)]">
-											<UserCheck
-												className="size-10 md:size-12 text-primary"
-												strokeWidth={3}
-											/>
-										</div>
-									</div>
+								<div className="text-center py-12">
+                                    <h3 className="text-[20px] sm:text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
+                                        Welcome to the{' '}
+                                        <span className="relative">
+                                            club!
+                                            <div className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-2 md:h-4 bg-accent rounded-full" />
+                                        </span>
+                                    </h3>
+                                    <p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 font-medium leading-relaxed px-2 md:px-0">
+                                        We&apos;re thrilled to have you on board. Get ready to transform your eating experience!
+                                    </p>
 
-									<h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 md:mb-4">
-										You&apos;re on the list!
-									</h3>
-
-									<p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-md mx-auto">
-										Get ready to transform your eating. We&apos;ll notify you the moment we launch.
-									</p>
+                                    
 
 									<Image
-										src="/images/peaker-homie.png"
+										src="/images/peaking-homie.gif"
 										alt="Thank You Illustration"
-										width={100}
+										width={150}
 										height={100}
-										className="mx-auto -mb-2"
+										className="relative  mx-auto -mb-7 z-20"
 									/>
 
-									<div className="bg-secondary/75 border-2 border-primary rounded-xl p-4 md:p-6 max-w-sm mx-auto shadow-[3px_3px_0px_0px_var(--primary)]">
-										<div className="flex items-center gap-3 mb-3">
-											<Mail
-												className="size-5 text-primary"
-												strokeWidth={3}
-											/>
-											<span className="font-bold text-primary">What&apos;s next?</span>
-										</div>
-										<ul className="text-sm text-primary/90 space-y-2 pl-6 text-left">
-											<li className="flex items-start gap-2">
-												<span className="text-primary mt-0.5">•</span>
-												<span>Check your inbox for a welcome email</span>
-											</li>
-											<li className="flex items-start gap-2">
-												<span className="text-primary mt-0.5">•</span>
-												<span>Follow our journey as we build</span>
-											</li>
-											<li className="flex items-start gap-2">
-												<span className="text-primary mt-0.5">•</span>
-												<span>Be first to access exclusive features</span>
-											</li>
-										</ul>
+									{/* Perks cards grid - outside main card for better layout */}
+									<div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+										{perks.map((perk, index) => {
+											const IconComponent = perk.icon;
+											const bgColors = ['bg-secondary', 'bg-primary/60', 'bg-accent/80'];
+											const textColors = ['text-primary', 'text-white', 'text-primary'];
+
+											return (
+												<div
+													key={index}
+													className={`${bgColors[index]} ${textColors[index]} z-10 border-3 border-primary rounded-xl md:rounded-2xl p-4 md:p-6 shadow-[4px_4px_0px_0px_var(--primary)] md:shadow-[6px_6px_0px_0px_var(--primary)] transform hover:shadow-[2px_2px_0px_0px_var(--primary)] md:hover:shadow-[3px_3px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px] md:hover:translate-x-[3px] md:hover:translate-y-[3px] transition-all duration-300 cursor-pointer`}>
+													<div className="flex flex-col items-center text-center gap-3">
+														<div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center border-2 border-primary ${bgColors[index]} shadow-[2px_2px_0px_0px_var(--foreground)]`}>
+															<IconComponent
+																className={`size-6 md:size-7 ${
+																	textColors[index] === 'text-white'
+																		? 'text-white'
+																		: 'text-primary'
+																}`}
+																strokeWidth={2.5}
+															/>
+														</div>
+														<div>
+															<h4
+																className={`text-base md:text-lg font-bold mb-1 ${textColors[index]}`}>
+																{perk.title}
+															</h4>
+															<p
+																className={`text-sm md:text-base ${
+																	textColors[index] === 'text-white'
+																		? 'text-white/90'
+																		: 'text-primary/70'
+																} font-medium`}>
+																{perk.text}
+															</p>
+														</div>
+													</div>
+												</div>
+											);
+										})}
 									</div>
 
-									<div className="mt-8 md:mt-10">
-										<span className="text-sm text-gray-500">
-											You&apos;ve joined <strong>3</strong> other early adopters!
-										</span>
-									</div>
+                                    <div className="flex justify-center mt-6 md:mt-12">
+                                        <button
+                                            onClick={goToContactPage}
+                                            className={`group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 bg-secondary hover:bg-secondary/90 border-3 md:border-4 border-primary !text-primary shadow-[6px_6px_0px_0px_var(--primary)] md:shadow-[8px_8px_0px_0px_var(--primary)] hover:shadow-[3px_3px_0px_0px_var(--primary)] md:hover:shadow-[4px_4px_0px_0px_var(--primary)]`}>
+                                            Contact Us
+                                            <ArrowRight
+                                                className="size-4 md:size-5 lg:size-6 group-hover:translate-x-1 transition-transform duration-300 ml-2"
+                                                strokeWidth={3}
+                                            />
+                                        </button>
+                                    </div>
 								</div>
 							</div>
 
@@ -595,6 +745,11 @@ const SubmissionForm = () => {
 
 				.animate-magical-float {
 					animation: magical-float 10s ease-in-out infinite;
+				}
+				
+				.triangle {
+					width: 0;
+					height: 0;
 				}
 			`}</style>
 		</div>

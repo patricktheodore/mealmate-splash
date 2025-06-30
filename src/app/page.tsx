@@ -82,7 +82,7 @@ export default function Home() {
 				<div className="flex gap-2">
 					<button
 						onClick={scrollToForm}
-						className="bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base py-3 md:py-4 px-6 md:px-8 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[2px_2px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px]">
+						className="bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base py-3 md:py-4 px-6 md:px-8 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px]">
 						Join the waitlist
 					</button>
 				</div>
@@ -102,7 +102,7 @@ export default function Home() {
 					</p> */}
 					<button
 						onClick={scrollDown}
-						className="bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base py-3 md:py-4 px-6 md:px-8 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[2px_2px_0px_0px_var(--primary)] hover:translate-x-[2px] hover:translate-y-[2px]">
+						className="bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-base py-3 md:py-4 px-6 md:px-8 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px]">
 						Learn more
 						<svg
 							className="ml-2 w-4 h-4 md:w-5 md:h-5"
