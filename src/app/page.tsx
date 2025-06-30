@@ -61,7 +61,7 @@ export default function Home() {
 		<div className="h-full relative w-full flex flex-col">
 			<nav className="w-full flex justify-between items-center p-4 xl:py-6 px-4 md:px-8 xl:px-12 z-50">
 				<div className="flex items-center gap-2">
-					<Image
+					{/* <Image
 						className="hidden md:block"
 						src="/images/mealmate-logo.png"
 						alt="MealMate Logo"
@@ -76,7 +76,15 @@ export default function Home() {
 						height={48}
 						width={48}
 						priority
-					/>
+					/> */}
+
+                    <div className='bndime-font bg-button-bg hover:bg-button-bg-hover border-2 border-primary !text-primary uppercase flex justify-center items-center text-5xl pl-2 pr-2 pt-2 rounded-xl transition-all duration-300 hover:cursor-pointer shadow-[4px_4px_0px_0px_var(--primary)] hover:shadow-[0px_0px_0px_0px_var(--primary)] hover:translate-x-[4px] hover:translate-y-[4px]'>
+                        <span>M</span>
+                        <span className="hidden md:inline">ealMate</span>
+                    </div>
+
+
+
 					<div className="hidden md:flex items-center gap-2"></div>
 				</div>
 				<div className="flex gap-2">

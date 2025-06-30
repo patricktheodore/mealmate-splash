@@ -1,9 +1,16 @@
 import './globals.css';
 import { Montserrat } from 'next/font/google';
 // import { DefaultSeo } from 'next-seo';
+import localFont from 'next/font/local';
 
 const montserrat = Montserrat({ 
   subsets: ['latin'],
+});
+
+const bndime = localFont({
+  src: './fonts/BNDimeDisplay.otf',
+  variable: '--font-bndime',
+  display: 'swap',
 });
 
 export const metadata = {
@@ -36,7 +43,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" className={montserrat.className}>
+		<html lang="en" className={`${montserrat.className} ${bndime.variable}`}>
 			<head>
 				<link
 					rel="canonical"

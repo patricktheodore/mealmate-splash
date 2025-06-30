@@ -54,6 +54,10 @@ input {
     width: 100%;
 }
 
+.bndime-font {
+    font-family: var(--font-bndime), sans-serif;
+}
+
 /* Floating animation - gentle up and down movement */
 @keyframes float {
 
