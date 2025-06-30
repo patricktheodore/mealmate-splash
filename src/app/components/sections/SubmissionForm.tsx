@@ -280,16 +280,16 @@ const SubmissionForm = () => {
 	};
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-		// MOCK
-		setIsSubmitting(true);
+		// // MOCK
+		// setIsSubmitting(true);
 
-		// wait 3 seconds to simulate network delay
-		await new Promise((resolve) => setTimeout(resolve, 3000));
+		// // wait 3 seconds to simulate network delay
+		// await new Promise((resolve) => setTimeout(resolve, 3000));
 
-		setSubmitStatus('success');
-		setIsSubmitting(false);
-		return;
-        // MOCK END
+		// setSubmitStatus('success');
+		// setIsSubmitting(false);
+		// return;
+        // // MOCK END
 
 		e.preventDefault();
 
