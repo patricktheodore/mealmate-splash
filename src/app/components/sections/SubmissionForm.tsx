@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Users, Zap, Mail, User, ArrowRight, CheckCircle, Loader, UserCheck } from 'lucide-react';
+import { Sparkles, Users, Zap, Mail, User, ArrowRight, CheckCircle, Loader } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
 import Image from 'next/image';
 
