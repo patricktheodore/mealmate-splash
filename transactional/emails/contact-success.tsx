@@ -7,7 +7,7 @@ export interface ContactSuccessEmailProps {
 export const ContactSuccessEmail: React.FC<Readonly<ContactSuccessEmailProps>> = ({ name }) => (
 	<Html>
 		<Head />
-		<Preview>Thanks for reaching out! We'll get back to you faster than you can say "ma-ma-ma-meal-mate"! 🍽️</Preview>
+		<Preview>Thanks for reaching out! We'll get back to you faster than you can say "ma-ma-ma-meal-mate"!</Preview>
 		<Body style={main}>
 
 			<Container style={container}>
