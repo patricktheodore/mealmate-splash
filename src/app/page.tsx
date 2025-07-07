@@ -18,38 +18,40 @@ export default function Home() {
     const problemTextWrapperRef = useRef<HTMLDivElement>(null);
     const solutionTextRef = useRef<HTMLDivElement>(null);
     const solutionTextWrapperRef = useRef<HTMLDivElement>(null);
+    const submissionWrapperRef = useRef<HTMLDivElement>(null);
+    const mainContainerRef = useRef<HTMLDivElement>(null);
 
     const OPTIONS: EmblaOptionsType = { containScroll: false };
     const PROBLEMSLIDES = [
         {
             id: 0,
-            title: 'You pay extra for no reason.',
+            title: 'You pay extra for no reason',
             description: 'Often 40-60% more than buying the same ingredients yourself at the supermarket',
-            bgColor: 'bg-background',
+            bgColor: 'bg-[#FEC38C]',
             textColor: 'text-primary',
             image: '/images/problem-01.png',
         },
         {
             id: 1,
-            title: 'You still have to grocery shop.',
-            description: 'Meal kits solve part of the problem, but not the rest.',
-            bgColor: 'bg-primary/60',
+            title: 'You still have to grocery shop',
+            description: 'Meal kits solve part of the problem, but not the rest',
+            bgColor: 'bg-[#6C75D5]',
             textColor: 'text-white',
             image: '/images/problem-02.png',
         },
         {
             id: 2,
-            title: 'You get trapped into weekly subscriptions.',
-            description: 'Pre-set menus and costly lock in subscriptions.',
-            bgColor: 'bg-accent/80',
+            title: 'You get trapped into weekly subscriptions',
+            description: 'Pre-set menus and costly lock in subscriptions',
+            bgColor: 'bg-[#FFBDBE]',
             textColor: 'text-primary',
             image: '/images/problem-03.png',
         },
         {
             id: 3,
-            title: 'All that plastic... every week.',
-            description: 'Convenience comes at a cost to the environment.',
-            bgColor: 'bg-secondary',
+            title: 'All that plastic... every week',
+            description: 'Convenience comes at a cost to the environment',
+            bgColor: 'bg-[#E2F380]',
             textColor: 'text-primary',
             image: '/images/problem-04.png',
         },
@@ -57,41 +59,41 @@ export default function Home() {
     const SOLUTIONSLIDES = [
         {
             id: 0,
-            title: 'Same convenience. Fraction of the cost.',
-            description: 'Half the price of traditional meal kits.',
-            bgColor: 'bg-accent/80',
+            title: 'Same convenience. Fraction of the cost',
+            description: 'Half the price of traditional meal kits',
+            bgColor: 'bg-[#FFBDBE]',
             textColor: 'text-primary',
             image: '/images/solution-01.png',
         },
         {
             id: 1,
-            title: 'Built around your grocery shopping.',
+            title: 'Built around your grocery shopping',
             description: 'Plan meals and fill your cart - all in one go',
-            bgColor: 'bg-indigo-400/80',
+            bgColor: 'bg-[#6C75D5]',
             textColor: 'text-white',
             image: '/images/solution-02.png',
         },
         {
             id: 2,
-            title: 'You&re in control. Always.',
+            title: "You're in control. Always.",
             description: 'No lock-ins, no subscriptions - just meals your way',
-            bgColor: 'bg-background',
+            bgColor: 'bg-[#FEC38C]',
             textColor: 'text-primary',
             image: '/images/solution-03.png',
         },
         {
             id: 3,
-            title: 'Meals made for you.',
+            title: 'Meals made for you',
             description: 'Personalised to your taste, budget & goals',
-            bgColor: 'bg-primary/60',
+            bgColor: 'bg-[#92AD71]',
             textColor: 'text-white',
             image: '/images/solution-04.png',
         },
         {
             id: 4,
-            title: "Recipe cards you'll keep forever.",
+            title: "Recipe cards you'll keep forever",
             description: 'Designed to be collected, reused and loved',
-            bgColor: 'bg-secondary',
+            bgColor: 'bg-[#E2F380]',
             textColor: 'text-primary',
             image: '/images/solution-05.png',
         },
@@ -113,6 +115,20 @@ export default function Home() {
                     }
                 });
 
+                // Background color animation when submission form comes into view
+                gsap.to(mainContainerRef.current, {
+                    backgroundColor: 'var(--secondary)',
+                    duration: 0.5,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: submissionWrapperRef.current,
+                        start: 'top 60%', // When top of submission wrapper is 80% down the viewport
+                        end: 'top 40%',   // Complete animation when it's 50% down
+                        scrub: 0.5,
+                        toggleActions: 'play none reverse reverse'
+                    }
+                });
+
                 // Problem text animation with position switching
                 const problemText = problemTextRef.current;
                 const problemWrapper = problemTextWrapperRef.current;
@@ -131,13 +147,13 @@ export default function Home() {
                 });
 
                 // Create a timeline for better control
-                const tl = gsap.timeline({
+                gsap.timeline({
                     scrollTrigger: {
                         trigger: problemWrapper,
                         start: 'top bottom', // When the wrapper enters the viewport
                         end: 'bottom top', // When the wrapper leaves the viewport
                         scrub: 1,
-                        onUpdate: (self) => {
+                        onUpdate: () => {
                             // Calculate when to switch based on the wrapper's position
                             const wrapperRect = problemWrapper?.getBoundingClientRect();
                             const windowHeight = window.innerHeight;
@@ -224,13 +240,13 @@ export default function Home() {
                 });
 
                 // Solution text timeline
-                const solutionTl = gsap.timeline({
+                gsap.timeline({
                     scrollTrigger: {
                         trigger: solutionWrapper,
                         start: 'top bottom',
                         end: 'bottom top',
                         scrub: 1,
-                        onUpdate: (self) => {
+                        onUpdate: () => {
                             // Calculate when to switch based on the wrapper's position
                             const wrapperRect = solutionWrapper?.getBoundingClientRect();
                             const windowHeight = window.innerHeight;
@@ -320,7 +336,7 @@ export default function Home() {
     };
 
     return (
-        <div className="h-full relative w-full flex flex-col">
+        <div ref={mainContainerRef} className="h-full relative w-full flex flex-col transition-colors duration-300">
             <nav className="w-full flex justify-between items-center p-4 xl:py-6 px-4 md:px-8 xl:px-12 z-50">
                 <div className="flex items-center gap-2">
                     <Image
@@ -368,10 +384,10 @@ export default function Home() {
             <div ref={problemTextWrapperRef} id='problem' className="relative z-10 px-4" style={{ minHeight: '50vh' }}>
                 <div ref={problemTextRef} className="mx-auto max-w-3xl text-center">
                     <span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
-                        We tried every meal kit out there.
+                        We tried every meal kit out there
                     </span>
                     <h2 className="text-[40px] md:text-[60px] xl:text-[80px] font-bold leading-[0.9] tracking-tighter text-gray-700 mb-8">
-                        Here&apos;s why they don&apos;t work.
+                        Here&apos;s why they don&apos;t work
                     </h2>
                 </div>
             </div>
@@ -383,19 +399,19 @@ export default function Home() {
             <div ref={solutionTextWrapperRef} id='solution' className="relative z-10 px-4" style={{ minHeight: '75vh' }}>
                 <div ref={solutionTextRef} className="mx-auto max-w-3xl text-center">
                     <span className="text-base md:text-lg xl:text-2xl tracking-tight text-gray-500 mb-4 block">
-                        Not another meal planning app.
+                        Not another meal planning app
                     </span>
                     <h2 className="text-[40px] md:text-[60px] xl:text-[80px] font-bold leading-[0.9] tracking-tighter text-gray-700 mb-8">
-                        Something better. Built for real life.
+                        Something better. Built for real life
                     </h2>
-                </div>
+                </div>  
             </div>
 
             <div className="relative z-40">
                 <EmblaCarousel slides={SOLUTIONSLIDES} options={OPTIONS} />
             </div>
 
-            <div className="relative z-10">
+            <div ref={submissionWrapperRef} className="relative z-10">
                 <SubmissionForm />
             </div>
         </div>

@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Users, Zap, Mail, User, ArrowRight, CheckCircle, Loader } from 'lucide-react';
+import { Sparkles, Zap, Mail, User, ArrowRight, CheckCircle, Loader } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
 import Image from 'next/image';
 
@@ -409,7 +409,7 @@ const SubmissionForm = () => {
 	};
 
 	return (
-		<div className="w-full py-16 md:py-24 lg:py-46 xl:py-68 min-h-screen bg-secondary relative overflow-hidden">
+		<div className="w-full py-16 md:py-24 lg:py-46 xl:py-68 min-h-screen bg-transparent relative overflow-hidden">
 			{/* Confetti Animation */}
 			<Confetti isActive={showConfetti} />
 			
@@ -463,16 +463,6 @@ const SubmissionForm = () => {
 				{/* Main CTA Container */}
 				<div id='form' className="w-full max-w-4xl mx-auto mb-4 md:mb-8">
 					<div className="bg-background rounded-2xl md:rounded-3xl border-2 border-primary shadow-[8px_8px_0px_0px_var(--primary)] md:shadow-[12px_12px_0px_0px_var(--primary)] p-6 md:p-8 xl:p-12 relative">
-						{/* Exclusive badge */}
-						<div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-primary text-secondary px-4 py-2 md:px-6 md:py-3 rounded-full border-2 border-foreground shadow-[3px_3px_0px_0px_var(--foreground)] md:shadow-[4px_4px_0px_0px_var(--foreground)] transform rotate-12">
-							<div className="flex items-center gap-1.5 md:gap-2">
-								<Users
-									className="size-3 md:size-4"
-									strokeWidth={3}
-								/>
-								<span className="font-bold text-xs md:text-sm">EXCLUSIVE</span>
-							</div>
-						</div>
 
 						<div className="flex flex-col gap-6 md:gap-8 lg:gap-12 relative z-10">
 							{/* Success Message - Hidden initially */}
@@ -565,7 +555,7 @@ const SubmissionForm = () => {
 									<>
 										{/* Header */}
 										<div className="text-center">
-											<h3 className="text-[20px] sm:text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
+											<h3 className="text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] leading-[1.2] tracking-tighter text-gray-700 font-bold mb-4 md:mb-6">
 												Ready to{' '}
 												<span className="relative">
 													revolutionise
@@ -604,7 +594,7 @@ const SubmissionForm = () => {
 										</div>
 
 										{/* Form */}
-										<div className="w-full flex flex-col gap-4 md:gap-6 px-8 md:px-12 lg:px-16">
+										<div className="w-full flex flex-col gap-4 md:gap-6 px-2 md:px-12 lg:px-16">
 											{formFields.map((field) => {
 												const IconComponent = field.icon;
 												const isFocused = focusedField === field.name;
@@ -661,11 +651,11 @@ const SubmissionForm = () => {
 											})}
 
 											{/* Submit Button */}
-											<div className="flex justify-center mt-2 md:mt-4">
+											<div className="flex justify-center mb-4 md:mb-0 mt-2 md:mt-4">
 												<button
 													onClick={handleSubmit}
 													disabled={isSubmitting}
-													className={`group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 ${getSubmitButtonStyle()}`}>
+													className={`w-full group font-bold tracking-wide uppercase flex justify-center items-center leading-5 text-sm md:text-base lg:text-lg py-3 px-6 md:py-4 md:px-8 lg:py-5 lg:px-12 rounded-xl md:rounded-2xl transition-all duration-300 hover:translate-x-[3px] hover:translate-y-[3px] md:hover:translate-x-[4px] md:hover:translate-y-[4px] relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-75 ${getSubmitButtonStyle()}`}>
 													{getSubmitButtonContent()}
 
 													{/* Button decorative elements */}
@@ -688,7 +678,7 @@ const SubmissionForm = () => {
 											</div>
 
 											{/* Benefits below form */}
-											<div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
+											<div className="hidden md:grid md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
 												{[
 													{ icon: Zap, text: 'Early access perks' },
 													{ icon: Mail, text: 'No spam, ever' },

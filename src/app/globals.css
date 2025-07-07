@@ -330,14 +330,14 @@ input {
 
 @media (min-width: 768px) {
     .embla {
-        --slide-size: 480px;
+        --slide-size: 420px;
         --slide-height: 600px;
     }
 }
 
 @media (min-width: 1280px) {
     .embla {
-        --slide-size: 620px;
+        --slide-size: 500px;
         --slide-height: 740px;
     }
 }
