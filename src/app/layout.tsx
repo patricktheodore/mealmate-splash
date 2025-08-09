@@ -1,6 +1,7 @@
 import './globals.css';
 import { Montserrat } from 'next/font/google';
 // import { DefaultSeo } from 'next-seo';
+import { Analytics } from '@vercel/analytics/next';
 import localFont from 'next/font/local';
 
 const montserrat = Montserrat({ 
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			</head>
 			<body>
                 {children}
+                <Analytics />
             </body>
 		</html>
 	);
