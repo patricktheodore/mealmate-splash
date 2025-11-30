@@ -17,17 +17,17 @@ const bndime = localFont({
 
 export const metadata = {
 	title: 'mealmate',
-	description: 'Your compelling business description for SEO',
-	keywords: 'your, business, keywords',
-	authors: [{ name: 'Patrick Sara' }],
+	description: 'Plan, Shop, Eat - Smarter',
+	keywords: 'meal planner,grocery list,meal prep,recipes,dinner ideas,healthy meals,family meals, smart recipes',
+	authors: [{ name: 'mealmate' }],
 	creator: 'mealmate',
 	openGraph: {
 		type: 'website',
-		locale: 'en_US',
+		locale: 'en_AU',
 		url: 'mealmate.au',
 		siteName: 'mealmate',
 		title: 'mealmate | Landing Page',
-		description: 'Your compelling business description for SEO',
+		description: 'Plan, Shop, Eat - Smarter',
 		images: [
 			{
 				url: '/images/og-image.jpg',
